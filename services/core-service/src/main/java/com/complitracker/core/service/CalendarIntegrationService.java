@@ -8,6 +8,8 @@ import com.complitracker.core.repository.CalendarEventRepository;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.microsoft.graph.authentication.IAuthenticationProvider;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -15,11 +17,18 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-@RequiredArgsConstructor
 public class CalendarIntegrationService {
     private final CalendarEventRepository calendarEventRepository;
     private final GoogleCalendarClient googleCalendarClient;
-    private final OutlookCalendarClient outlookCalendarClient;
+    private final Optional<OutlookCalendarClient> outlookCalendarClient;
+
+    public CalendarIntegrationService(CalendarEventRepository calendarEventRepository,
+                                     GoogleCalendarClient googleCalendarClient,
+                                     @Autowired(required = false) OutlookCalendarClient outlookCalendarClient) {
+        this.calendarEventRepository = calendarEventRepository;
+        this.googleCalendarClient = googleCalendarClient;
+        this.outlookCalendarClient = Optional.ofNullable(outlookCalendarClient);
+    }
 
     public CalendarEvent createComplianceEvent(ComplianceItem complianceItem, String userId) {
         CalendarEvent event = CalendarEvent.builder()
@@ -51,13 +60,13 @@ public class CalendarIntegrationService {
                 event.getStartDateTime(),
                 event.getEndDateTime()
             );
-            case OUTLOOK -> outlookCalendarClient.createEvent(
+            case OUTLOOK -> outlookCalendarClient.map(client -> client.createEvent(
                 provider.getAccessToken(),
                 event.getTitle(),
                 event.getDescription(),
                 event.getStartDateTime(),
                 event.getEndDateTime()
-            );
+            )).orElse(null);
         };
     }
 
@@ -84,14 +93,14 @@ public class CalendarIntegrationService {
                 event.getStartDateTime(),
                 event.getEndDateTime()
             );
-            case OUTLOOK -> outlookCalendarClient.updateEvent(
+            case OUTLOOK -> outlookCalendarClient.ifPresent(client -> client.updateEvent(
                 provider.getAccessToken(),
                 externalEventId,
                 event.getTitle(),
                 event.getDescription(),
                 event.getStartDateTime(),
                 event.getEndDateTime()
-            );
+            ));
         }
     }
 
@@ -111,7 +120,10 @@ public class CalendarIntegrationService {
     private void deleteExternalCalendarEvent(CalendarProvider provider, String externalEventId) {
         switch (provider) {
             case GOOGLE -> googleCalendarClient.deleteEvent(provider.getAccessToken(), externalEventId);
-            case OUTLOOK -> outlookCalendarClient.deleteEvent(provider.getAccessToken(), externalEventId);
+            case OUTLOOK -> outlookCalendarClient.ifPresent(client -> client.deleteEvent(
+                provider.getAccessToken(),
+                externalEventId
+            ));
         }
     }
 

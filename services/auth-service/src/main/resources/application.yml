@@ -14,8 +14,15 @@ spring:
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
-      ddl-auto: update
+      ddl-auto: none
     show-sql: true
+  sql:
+    init:
+      mode: always
+      platform: postgresql
+      schema-locations: classpath:schema.sql
+      data-locations: classpath:data.sql
+      continue-on-error: false
   security:
     oauth2:
       client:

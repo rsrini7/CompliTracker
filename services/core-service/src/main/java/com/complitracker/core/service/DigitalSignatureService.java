@@ -17,13 +17,25 @@ import java.util.Map;
 import java.time.LocalDateTime;
 
 @Service
-@RequiredArgsConstructor
 public class DigitalSignatureService {
     private final SignatureRequestRepository signatureRequestRepository;
-    private final DocuSignClient docuSignClient;
-    private final AdobeSignClient adobeSignClient;
     private final NotificationService notificationService;
     private final SignatureAuditLogRepository auditLogRepository;
+    private final DocuSignClient docuSignClient;
+    private final AdobeSignClient adobeSignClient;
+
+    public DigitalSignatureService(
+            SignatureRequestRepository signatureRequestRepository,
+            NotificationService notificationService,
+            SignatureAuditLogRepository auditLogRepository,
+            @org.springframework.beans.factory.annotation.Autowired(required = false) DocuSignClient docuSignClient,
+            @org.springframework.beans.factory.annotation.Autowired(required = false) AdobeSignClient adobeSignClient) {
+        this.signatureRequestRepository = signatureRequestRepository;
+        this.notificationService = notificationService;
+        this.auditLogRepository = auditLogRepository;
+        this.docuSignClient = docuSignClient;
+        this.adobeSignClient = adobeSignClient;
+    }
 
     public SignatureRequest createSignatureRequest(Document document, List<String> signers, SignatureProvider provider) {
         // Log signature request creation
@@ -44,17 +56,25 @@ public class DigitalSignatureService {
 
     private String createExternalSignatureRequest(Document document, List<String> signers, SignatureProvider provider) {
         return switch (provider) {
-            case DOCUSIGN -> docuSignClient.createSignatureRequest(
+            case DOCUSIGN -> {
+                if (docuSignClient == null) {
+                    throw new IllegalStateException("DocuSign integration is not configured");
+                }
+                yield docuSignClient.createSignatureRequest(
                 document.getFileUrl(),
                 document.getName(),
                 signers
             );
+        }
+            
             case ADOBE_SIGN -> adobeSignClient.createSignatureRequest(
                 document.getFileUrl(),
                 document.getName(),
                 signers
             );
+            
         };
+    
     }
 
     public void updateSignatureStatus(String externalRequestId, SignatureStatus status, Map<String, String> signerStatuses) {
@@ -72,8 +92,18 @@ public class DigitalSignatureService {
 
     public void cancelSignatureRequest(SignatureRequest request) {
         switch (request.getProvider()) {
-            case DOCUSIGN -> docuSignClient.voidEnvelope(request.getExternalRequestId());
-            case ADOBE_SIGN -> adobeSignClient.cancelAgreement(request.getExternalRequestId());
+            case DOCUSIGN -> {
+                if (docuSignClient == null) {
+                    throw new IllegalStateException("DocuSign integration is not configured");
+                }
+                docuSignClient.voidEnvelope(request.getExternalRequestId());
+            }
+            case ADOBE_SIGN -> {
+                if (adobeSignClient == null) {
+                    throw new IllegalStateException("Adobe Sign integration is not configured");
+                }
+                adobeSignClient.cancelAgreement(request.getExternalRequestId());
+            }
         }
 
         request.setStatus(SignatureStatus.CANCELLED);
@@ -136,15 +166,35 @@ public class DigitalSignatureService {
 
     private Map<String, String> extractSignerStatuses(SignatureProvider provider, Map<String, Object> eventData) {
         return switch (provider) {
-            case DOCUSIGN -> docuSignClient.extractSignerStatuses(eventData);
-            case ADOBE_SIGN -> adobeSignClient.extractSignerStatuses(eventData);
+            case DOCUSIGN -> {
+                if (docuSignClient == null) {
+                    throw new IllegalStateException("DocuSign integration is not configured");
+                }
+                yield docuSignClient.extractSignerStatuses(eventData);
+            }
+            case ADOBE_SIGN -> {
+                if (adobeSignClient == null) {
+                    throw new IllegalStateException("Adobe Sign integration is not configured");
+                }
+                yield adobeSignClient.extractSignerStatuses(eventData);
+            }
         };
     }
 
     private void validateWebhookAuthenticity(SignatureProvider provider, Map<String, Object> eventData, HttpServletRequest request) {
         switch (provider) {
-            case DOCUSIGN -> validateDocuSignWebhook(eventData, request);
-            case ADOBE_SIGN -> validateAdobeSignWebhook(eventData, request);
+            case DOCUSIGN -> {
+                if (docuSignClient == null) {
+                    throw new IllegalStateException("DocuSign integration is not configured");
+                }
+                validateDocuSignWebhook(eventData, request);
+            }
+            case ADOBE_SIGN -> {
+                if (adobeSignClient == null) {
+                    throw new IllegalStateException("Adobe Sign integration is not configured");
+                }
+                validateAdobeSignWebhook(eventData, request);
+            }
         }
     }
 

@@ -1,0 +1,59 @@
+server:
+  port: 8082
+  servlet:
+    context-path: /api/core
+
+spring:
+  application:
+    name: core-service
+  datasource:
+    url: jdbc:postgresql://localhost:5432/complitracker
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+  sql:
+    init:
+      mode: always
+      platform: postgresql
+      schema-locations: classpath:schema.sql
+      data-locations: classpath:data.sql
+      continue-on-error: false
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+    register-with-eureka: true
+    fetch-registry: true
+  instance:
+    prefer-ip-address: true
+
+# Adobe Sign Configuration
+adobesign:
+  api:
+    enabled: ${ADOBESIGN_ENABLED:false}
+    baseUrl: ${ADOBESIGN_BASE_URL:""}
+    clientId: ${ADOBESIGN_CLIENT_ID:""}
+    clientSecret: ${ADOBESIGN_CLIENT_SECRET:""}
+
+# DocuSign Configuration
+docusign:
+  enabled: ${DOCUSIGN_ENABLED:false}
+  api:
+    baseUrl: ${DOCUSIGN_BASE_URL:""}
+    accountId: ${DOCUSIGN_ACCOUNT_ID:""}
+    integrationKey: ${DOCUSIGN_INTEGRATION_KEY:""}
+
+# Microsoft Graph Configuration
+microsoft:
+  graph:
+    enabled: ${MICROSOFT_GRAPH_ENABLED:false}
+    client-id: ${MICROSOFT_CLIENT_ID:""}
+    client-secret: ${MICROSOFT_CLIENT_SECRET:""}
+    tenant-id: ${MICROSOFT_TENANT_ID:""}
+    scopes: ${MICROSOFT_GRAPH_SCOPES:[]}

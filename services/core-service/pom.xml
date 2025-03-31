@@ -20,6 +20,8 @@
         <google-calendar-api.version>v3-rev20230707-2.0.0</google-calendar-api.version>
         <google-auth-library.version>1.19.0</google-auth-library.version>
         <microsoft-graph.version>5.65.0</microsoft-graph.version>
+        <azure-identity.version>1.9.0</azure-identity.version>
+        <azure-core.version>1.44.1</azure-core.version>
     </properties>
 
     <dependencies>
@@ -95,18 +97,28 @@
             <version>${google-calendar-api.version}</version>
         </dependency>
 
+        <!-- Microsoft Graph API -->
+        <dependency>
+            <groupId>com.azure</groupId>
+            <artifactId>azure-identity</artifactId>
+            <version>${azure-identity.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.azure</groupId>
+            <artifactId>azure-core</artifactId>
+            <version>${azure-core.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.microsoft.graph</groupId>
+            <artifactId>microsoft-graph</artifactId>
+            <version>${microsoft-graph.version}</version>
+        </dependency>
+
         <!-- Google Auth Library -->
         <dependency>
             <groupId>com.google.auth</groupId>
             <artifactId>google-auth-library-oauth2-http</artifactId>
             <version>${google-auth-library.version}</version>
-        </dependency>
-
-        <!-- Microsoft Graph API -->
-        <dependency>
-            <groupId>com.microsoft.graph</groupId>
-            <artifactId>microsoft-graph</artifactId>
-            <version>${microsoft-graph.version}</version>
         </dependency>
 
         <!-- Testing -->
@@ -140,6 +152,7 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
+
 
     <build>
         <plugins>

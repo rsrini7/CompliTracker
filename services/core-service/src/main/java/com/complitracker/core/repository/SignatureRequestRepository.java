@@ -12,5 +12,4 @@ import java.util.Optional;
 public interface SignatureRequestRepository extends JpaRepository<SignatureRequest, Long> {
     Optional<SignatureRequest> findByExternalRequestId(String externalRequestId);
     List<SignatureRequest> findBySignersContainingAndStatus(String signer, SignatureStatus status);
-    List<SignatureRequest> findBySignerAndStatus(String userId, SignatureStatus status);
 }

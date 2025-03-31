@@ -2,6 +2,7 @@ package com.complitracker.core.service.impl;
 
 import com.complitracker.core.service.DocuSignClient;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -13,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 @Service
+@ConditionalOnProperty(prefix = "docusign", name = "enabled", havingValue = "true")
 public class DocuSignClientImpl implements DocuSignClient {
     @Value("${docusign.api.baseUrl}")
     private String baseUrl;
