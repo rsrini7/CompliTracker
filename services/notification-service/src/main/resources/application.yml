@@ -36,8 +36,18 @@ eureka:
 notification:
   channels:
     email:
-      enabled: true
+      enabled: false
     push:
       enabled: true
     sms:
       enabled: false
+    whatsapp:
+      enabled: false
+
+twilio:
+  account.sid: ""
+  auth.token: ""
+  phone.number: ""
+  whatsapp:
+    enabled: false
+    from: ""

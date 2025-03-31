@@ -8,6 +8,8 @@ import com.complitracker.notification.repository.NotificationRepository;
 import com.complitracker.notification.repository.NotificationPreferenceRepository;
 import com.complitracker.notification.exception.NotificationDeliveryException;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -21,10 +23,17 @@ public class NotificationService {
 
     private final NotificationRepository notificationRepository;
     private final NotificationPreferenceRepository preferenceRepository;
-    private final EmailService emailService;
-    private final SMSService smsService;
+    
+    @Autowired(required = false)
+    private SMSService smsService;
+    
     private final PushNotificationService pushService;
-    private final WhatsAppService whatsAppService;
+    
+    @Autowired(required = false)
+    private WhatsAppService whatsAppService;
+    
+    @Autowired(required = false)
+    private EmailService emailService;
 
     public void sendNotification(String userId, String title, String message, NotificationType type) {
         NotificationPreference preferences = preferenceRepository.findByUserId(userId)
@@ -54,53 +63,36 @@ public class NotificationService {
     }
 
     private void sendToChannel(Notification notification, NotificationChannel channel) {
-        int attempts = 0;
-        Exception lastException = null;
-
-        while (attempts < MAX_RETRY_ATTEMPTS) {
-            try {
-                switch (channel) {
-                    case EMAIL -> emailService.sendEmail(
-                        notification.getUserId(),
-                        notification.getTitle(),
-                        notification.getMessage()
-                    );
-                    case SMS -> smsService.sendSMS(
-                        notification.getUserId(),
-                        notification.getMessage()
-                    );
-                    case PUSH -> pushService.sendPushNotification(
-                        notification.getUserId(),
-                        notification.getTitle(),
-                        notification.getMessage()
-                    );
-                    case WHATSAPP -> whatsAppService.sendWhatsAppMessage(
+        switch (channel) {
+            case EMAIL:
+                if (emailService != null) {
+                    emailService.sendEmail(notification.getUserId(), notification.getTitle(), notification.getMessage());
+                }
+                break;
+            case SMS:
+                if (smsService != null) {
+                    smsService.sendSMS(
                         notification.getUserId(),
                         notification.getMessage()
                     );
                 }
-                return; // Success, exit the retry loop
-            } catch (Exception e) {
-                lastException = e;
-                attempts++;
-                if (attempts < MAX_RETRY_ATTEMPTS) {
-                    try {
-                        Thread.sleep(1000L * attempts); // Exponential backoff
-                    } catch (InterruptedException ie) {
-                        Thread.currentThread().interrupt();
-                        break;
-                    }
+                break;
+            case PUSH:
+                pushService.sendPushNotification(
+                    notification.getUserId(),
+                    notification.getTitle(),
+                    notification.getMessage()
+                );
+                break;
+            case WHATSAPP:
+                if (whatsAppService != null) {
+                    whatsAppService.sendWhatsAppMessage(
+                        notification.getUserId(),
+                        notification.getMessage()
+                    );
                 }
-            }
+                break;
         }
-
-        throw new NotificationDeliveryException(
-            "Failed to send notification after " + attempts + " attempts",
-            channel,
-            notification.getUserId(),
-            attempts,
-            lastException
-        );
     }
 
     public void updateNotificationPreferences(String userId, NotificationType type, Set<NotificationChannel> channels) {
