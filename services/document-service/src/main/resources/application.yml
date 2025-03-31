@@ -39,3 +39,11 @@ eureka:
 
 storage:
   location: ./document-storage
+
+aws:
+  accessKeyId: test
+  secretKey: test
+  region: us-east-1
+  s3:
+    endpoint: http://localhost:4566
+    bucket-name: document-bucket

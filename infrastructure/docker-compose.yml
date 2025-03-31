@@ -51,6 +51,29 @@ services:
       - postgres
       - eureka-server
 
+  # LocalStack (S3)
+  localstack:
+    image: localstack/localstack:latest
+    ports:
+      - "4566:4566"
+    environment:
+      - SERVICES=s3
+      - DEFAULT_REGION=us-east-1
+      - AWS_DEFAULT_REGION=us-east-1
+      - EDGE_PORT=4566
+      - DEBUG=1
+      - DATA_DIR=/tmp/localstack/data
+      - DOCKER_HOST=unix:///var/run/docker.sock
+      - CLEAR_TMP_FOLDER=0
+    volumes:
+      - localstack_data:/tmp/localstack
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    command: >
+      sh -c "
+        awslocal s3 mb s3://document-bucket &&
+        awslocal s3api put-bucket-acl --bucket document-bucket --acl public-read-write"
+
+
   # Document Service
   document-service:
     build:
@@ -64,9 +87,14 @@ services:
       - SPRING_DATASOURCE_USERNAME=postgres
       - SPRING_DATASOURCE_PASSWORD=postgres
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - AWS_ENDPOINT_URL=http://localstack:4566
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+      - AWS_REGION=us-east-1
     depends_on:
       - postgres
       - eureka-server
+      - localstack
 
   # Email Service
   email-service:
@@ -129,3 +157,4 @@ services:
 
 volumes:
   postgres_data:
+  localstack_data:

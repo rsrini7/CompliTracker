@@ -86,6 +86,26 @@ if ! curl -s "http://localhost:8761/actuator/health" > /dev/null; then
     check_service_health "Eureka Server" "8761" "/actuator/health"
 fi
 
+# Function to check if LocalStack S3 is ready
+check_localstack() {
+    echo "Waiting for LocalStack S3 to be ready..."
+    local max_attempts=30
+    local attempt=1
+
+    while [ $attempt -le $max_attempts ]; do
+        if curl -s "http://localhost:4566/_localstack/health" | grep -q '"s3":"available"'; then
+            echo "LocalStack S3 is ready!"
+            return 0
+        fi
+        echo "Waiting for LocalStack S3 to be ready (attempt $attempt/$max_attempts)..."
+        sleep 2
+        attempt=$((attempt + 1))
+    done
+
+    echo "Error: LocalStack S3 failed to start after $max_attempts attempts"
+    exit 1
+}
+
 # Check if PostgreSQL is running, if not start it
 if ! docker compose -f infrastructure/docker-compose.yml ps postgres | grep "5432" > /dev/null 2>&1; then
     echo "Starting PostgreSQL..."
@@ -93,6 +113,19 @@ if ! docker compose -f infrastructure/docker-compose.yml ps postgres | grep "543
     check_status "Starting PostgreSQL container"
     sleep 10
     check_postgres
+fi
+
+# Check if LocalStack is running, if not start it
+if ! docker compose -f infrastructure/docker-compose.yml ps localstack | grep "4566" > /dev/null 2>&1; then
+    echo "Starting LocalStack S3..."
+    # Clean up any existing LocalStack temporary files
+    if [ -d "/tmp/localstack" ]; then
+        echo "Cleaning up existing LocalStack temporary files..."
+        sudo rm -rf /tmp/localstack
+    fi
+    docker compose -f infrastructure/docker-compose.yml up -d localstack
+    check_status "Starting LocalStack container"
+    check_localstack
 fi
 
 # Stop Document Service if running
