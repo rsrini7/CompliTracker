@@ -93,7 +93,7 @@ check_localstack() {
     local attempt=1
 
     while [ $attempt -le $max_attempts ]; do
-        if curl -s "http://localhost:4566/_localstack/health" | grep -q '"s3":"available"'; then
+        if curl -s "http://localhost:4566/_localstack/health" | grep -q '"s3": "running"'; then
             echo "LocalStack S3 is ready!"
             return 0
         fi

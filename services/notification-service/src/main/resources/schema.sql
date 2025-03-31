@@ -1,5 +1,11 @@
 -- Notification Service Schema
 
+-- Drop existing tables
+DROP TABLE IF EXISTS notification_delivery_attempts;
+DROP TABLE IF EXISTS notifications;
+DROP TABLE IF EXISTS user_notification_preferences;
+DROP TABLE IF EXISTS notification_types;
+
 -- Create notification_types table
 CREATE TABLE IF NOT EXISTS notification_types (
     id SERIAL PRIMARY KEY,

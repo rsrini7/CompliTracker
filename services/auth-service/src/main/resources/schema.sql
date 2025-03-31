@@ -1,3 +1,9 @@
+-- Drop existing tables
+DROP TABLE IF EXISTS user_sessions;
+DROP TABLE IF EXISTS user_tokens;
+DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS roles;
+
 -- Roles table
 CREATE TABLE IF NOT EXISTS roles (
     id SERIAL PRIMARY KEY,

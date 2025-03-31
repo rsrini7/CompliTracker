@@ -1,5 +1,10 @@
 -- Core Service Schema
 
+-- Drop existing tables
+DROP TABLE IF EXISTS compliance_evidence;
+DROP TABLE IF EXISTS compliance_tasks;
+DROP TABLE IF EXISTS compliance_requirements;
+
 -- Create compliance_requirements table
 CREATE TABLE IF NOT EXISTS compliance_requirements (
     id SERIAL PRIMARY KEY,

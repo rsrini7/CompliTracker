@@ -1,5 +1,11 @@
 -- Document Service Schema
 
+-- Drop existing tables
+DROP TABLE IF EXISTS document_shares;
+DROP TABLE IF EXISTS document_tags;
+DROP TABLE IF EXISTS document_versions;
+DROP TABLE IF EXISTS documents;
+
 -- Create documents table
 CREATE TABLE IF NOT EXISTS documents (
     id SERIAL PRIMARY KEY,
