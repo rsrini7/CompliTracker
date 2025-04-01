@@ -1,7 +1,17 @@
-import React, { useState, useEffect } from 'react';
-import { Card, Button, Alert, ListGroup, Badge, Spinner, Form, Tabs, Tab } from 'react-bootstrap';
-import { useAuth } from '../../context/AuthContext';
-import signatureService from '../../services/signatureService';
+import React, { useState, useEffect } from "react";
+import {
+  Card,
+  Button,
+  Alert,
+  ListGroup,
+  Badge,
+  Spinner,
+  Form,
+  Tabs,
+  Tab,
+} from "react-bootstrap";
+import { useAuth } from "../../hooks/useAuth";
+import signatureService from "../../services/signatureService";
 
 const SignatureIntegration = () => {
   const { currentUser, token } = useAuth();
@@ -9,14 +19,14 @@ const SignatureIntegration = () => {
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
   const [providers, setProviders] = useState([]);
-  const [activeTab, setActiveTab] = useState('providers');
+  const [activeTab, setActiveTab] = useState("providers");
   const [settings, setSettings] = useState({
-    defaultProvider: '',
+    defaultProvider: "",
     signatureExpiration: 7,
     reminderFrequency: 2,
     allowSignatureDrawing: true,
     allowSignatureTyping: true,
-    allowSignatureUpload: true
+    allowSignatureUpload: true,
   });
 
   // Fetch signature providers on component mount
@@ -29,17 +39,17 @@ const SignatureIntegration = () => {
     try {
       setLoading(true);
       setError(null);
-      
+
       const response = await signatureService.getSignatureProviders(token);
       setProviders(response.data);
-      
+
       // If there are settings in the response, update state
       if (response.data.settings) {
         setSettings(response.data.settings);
       }
     } catch (err) {
-      console.error('Error fetching signature providers:', err);
-      setError('Failed to load signature providers. Please try again.');
+      console.error("Error fetching signature providers:", err);
+      setError("Failed to load signature providers. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -50,14 +60,17 @@ const SignatureIntegration = () => {
     try {
       setLoading(true);
       setError(null);
-      
+
       const response = await signatureService.getDocuSignAuthUrl(token);
-      
+
       // Redirect to DocuSign OAuth consent screen
       window.location.href = response.data.authUrl;
     } catch (err) {
-      console.error('Error connecting to DocuSign:', err);
-      setError(err.response?.data?.message || 'Failed to connect to DocuSign. Please try again.');
+      console.error("Error connecting to DocuSign:", err);
+      setError(
+        err.response?.data?.message ||
+          "Failed to connect to DocuSign. Please try again.",
+      );
       setLoading(false);
     }
   };
@@ -67,14 +80,17 @@ const SignatureIntegration = () => {
     try {
       setLoading(true);
       setError(null);
-      
+
       const response = await signatureService.getAdobeSignAuthUrl(token);
-      
+
       // Redirect to Adobe Sign OAuth consent screen
       window.location.href = response.data.authUrl;
     } catch (err) {
-      console.error('Error connecting to Adobe Sign:', err);
-      setError(err.response?.data?.message || 'Failed to connect to Adobe Sign. Please try again.');
+      console.error("Error connecting to Adobe Sign:", err);
+      setError(
+        err.response?.data?.message ||
+          "Failed to connect to Adobe Sign. Please try again.",
+      );
       setLoading(false);
     }
   };
@@ -84,19 +100,24 @@ const SignatureIntegration = () => {
     try {
       setLoading(true);
       setError(null);
-      
+
       await signatureService.disconnectProvider(token, providerType);
-      
+
       // Refresh providers
       await fetchSignatureProviders();
-      
-      setSuccess(`Successfully disconnected from ${providerType === 'docusign' ? 'DocuSign' : 'Adobe Sign'}`);
-      
+
+      setSuccess(
+        `Successfully disconnected from ${providerType === "docusign" ? "DocuSign" : "Adobe Sign"}`,
+      );
+
       // Clear success message after 3 seconds
       setTimeout(() => setSuccess(null), 3000);
     } catch (err) {
       console.error(`Error disconnecting from ${providerType}:`, err);
-      setError(err.response?.data?.message || `Failed to disconnect from ${providerType === 'docusign' ? 'DocuSign' : 'Adobe Sign'}. Please try again.`);
+      setError(
+        err.response?.data?.message ||
+          `Failed to disconnect from ${providerType === "docusign" ? "DocuSign" : "Adobe Sign"}. Please try again.`,
+      );
     } finally {
       setLoading(false);
     }
@@ -107,7 +128,7 @@ const SignatureIntegration = () => {
     const { name, value, type, checked } = e.target;
     setSettings({
       ...settings,
-      [name]: type === 'checkbox' ? checked : value
+      [name]: type === "checkbox" ? checked : value,
     });
   };
 
@@ -116,16 +137,19 @@ const SignatureIntegration = () => {
     try {
       setLoading(true);
       setError(null);
-      
+
       await signatureService.updateSettings(token, settings);
-      
-      setSuccess('Signature settings saved successfully');
-      
+
+      setSuccess("Signature settings saved successfully");
+
       // Clear success message after 3 seconds
       setTimeout(() => setSuccess(null), 3000);
     } catch (err) {
-      console.error('Error saving signature settings:', err);
-      setError(err.response?.data?.message || 'Failed to save signature settings. Please try again.');
+      console.error("Error saving signature settings:", err);
+      setError(
+        err.response?.data?.message ||
+          "Failed to save signature settings. Please try again.",
+      );
     } finally {
       setLoading(false);
     }
@@ -134,19 +158,19 @@ const SignatureIntegration = () => {
   return (
     <div className="signature-integration-container">
       <h4 className="mb-4">Digital Signature Integration</h4>
-      
+
       {error && (
         <Alert variant="danger" onClose={() => setError(null)} dismissible>
           {error}
         </Alert>
       )}
-      
+
       {success && (
         <Alert variant="success" onClose={() => setSuccess(null)} dismissible>
           {success}
         </Alert>
       )}
-      
+
       <Tabs
         activeKey={activeTab}
         onSelect={(k) => setActiveTab(k)}
@@ -158,33 +182,58 @@ const SignatureIntegration = () => {
               {loading && !providers.length ? (
                 <div className="text-center py-3">
                   <Spinner animation="border" variant="primary" />
-                  <p className="mt-2 text-muted">Loading signature providers...</p>
+                  <p className="mt-2 text-muted">
+                    Loading signature providers...
+                  </p>
                 </div>
               ) : (
                 <>
                   <h5 className="mb-3">Connected Providers</h5>
-                  
+
                   {providers.length === 0 ? (
                     <div className="text-center py-3">
-                      <i className="bi bi-pen" style={{ fontSize: '2rem', color: '#6c757d' }}></i>
-                      <p className="mt-2 text-muted">No signature providers connected yet</p>
+                      <i
+                        className="bi bi-pen"
+                        style={{ fontSize: "2rem", color: "#6c757d" }}
+                      ></i>
+                      <p className="mt-2 text-muted">
+                        No signature providers connected yet
+                      </p>
                       <p className="small text-muted">
-                        Connect DocuSign or Adobe Sign to enable digital signatures for your documents
+                        Connect DocuSign or Adobe Sign to enable digital
+                        signatures for your documents
                       </p>
                     </div>
                   ) : (
                     <ListGroup variant="flush">
                       {providers.map((provider) => (
-                        <ListGroup.Item key={provider.id} className="d-flex justify-content-between align-items-center">
+                        <ListGroup.Item
+                          key={provider.id}
+                          className="d-flex justify-content-between align-items-center"
+                        >
                           <div>
                             <div className="d-flex align-items-center">
-                              {provider.type === 'docusign' ? (
-                                <i className="bi bi-pen-fill me-2" style={{ fontSize: '1.2rem', color: '#2B5796' }}></i>
+                              {provider.type === "docusign" ? (
+                                <i
+                                  className="bi bi-pen-fill me-2"
+                                  style={{
+                                    fontSize: "1.2rem",
+                                    color: "#2B5796",
+                                  }}
+                                ></i>
                               ) : (
-                                <i className="bi bi-pen-fill me-2" style={{ fontSize: '1.2rem', color: '#EB1C26' }}></i>
+                                <i
+                                  className="bi bi-pen-fill me-2"
+                                  style={{
+                                    fontSize: "1.2rem",
+                                    color: "#EB1C26",
+                                  }}
+                                ></i>
                               )}
                               <span className="fw-bold">
-                                {provider.type === 'docusign' ? 'DocuSign' : 'Adobe Sign'}
+                                {provider.type === "docusign"
+                                  ? "DocuSign"
+                                  : "Adobe Sign"}
                               </span>
                               {provider.isDefault && (
                                 <Badge bg="info" className="ms-2">
@@ -196,7 +245,10 @@ const SignatureIntegration = () => {
                               {provider.email || provider.accountName}
                               {provider.expiresAt && (
                                 <span className="ms-2">
-                                  Expires: {new Date(provider.expiresAt).toLocaleDateString()}
+                                  Expires:{" "}
+                                  {new Date(
+                                    provider.expiresAt,
+                                  ).toLocaleDateString()}
                                 </span>
                               )}
                             </div>
@@ -209,7 +261,7 @@ const SignatureIntegration = () => {
                               onClick={() => {
                                 setSettings({
                                   ...settings,
-                                  defaultProvider: provider.type
+                                  defaultProvider: provider.type,
                                 });
                                 saveSettings();
                               }}
@@ -231,11 +283,11 @@ const SignatureIntegration = () => {
                       ))}
                     </ListGroup>
                   )}
-                  
+
                   <div className="mt-4">
                     <h6>Connect a Signature Provider</h6>
                     <div className="d-flex gap-2 mt-3">
-                      {!providers.some(p => p.type === 'docusign') && (
+                      {!providers.some((p) => p.type === "docusign") && (
                         <Button
                           variant="outline-primary"
                           onClick={connectDocuSign}
@@ -245,8 +297,8 @@ const SignatureIntegration = () => {
                           Connect DocuSign
                         </Button>
                       )}
-                      
-                      {!providers.some(p => p.type === 'adobesign') && (
+
+                      {!providers.some((p) => p.type === "adobesign") && (
                         <Button
                           variant="outline-primary"
                           onClick={connectAdobeSign}
@@ -263,7 +315,7 @@ const SignatureIntegration = () => {
             </Card.Body>
           </Card>
         </Tab>
-        
+
         <Tab eventKey="settings" title="Signature Settings">
           <Card>
             <Card.Body>
@@ -276,17 +328,20 @@ const SignatureIntegration = () => {
                     onChange={handleSettingChange}
                   >
                     <option value="">Select a default provider</option>
-                    {providers.map(provider => (
+                    {providers.map((provider) => (
                       <option key={provider.id} value={provider.type}>
-                        {provider.type === 'docusign' ? 'DocuSign' : 'Adobe Sign'}
+                        {provider.type === "docusign"
+                          ? "DocuSign"
+                          : "Adobe Sign"}
                       </option>
                     ))}
                   </Form.Select>
                   <Form.Text className="text-muted">
-                    This provider will be used by default when requesting signatures
+                    This provider will be used by default when requesting
+                    signatures
                   </Form.Text>
                 </Form.Group>
-                
+
                 <Form.Group className="mb-3" controlId="signatureExpiration">
                   <Form.Label>Signature Request Expiration (Days)</Form.Label>
                   <Form.Select
@@ -303,7 +358,7 @@ const SignatureIntegration = () => {
                     Signature requests will expire after this many days
                   </Form.Text>
                 </Form.Group>
-                
+
                 <Form.Group className="mb-3" controlId="reminderFrequency">
                   <Form.Label>Reminder Frequency (Days)</Form.Label>
                   <Form.Select
@@ -318,12 +373,13 @@ const SignatureIntegration = () => {
                     <option value="7">Every week</option>
                   </Form.Select>
                   <Form.Text className="text-muted">
-                    How often to send reminders to signatories who haven't signed
+                    How often to send reminders to signatories who haven't
+                    signed
                   </Form.Text>
                 </Form.Group>
-                
+
                 <h6 className="mt-4 mb-3">Signature Methods</h6>
-                
+
                 <Form.Group className="mb-3" controlId="allowSignatureDrawing">
                   <Form.Check
                     type="checkbox"
@@ -333,10 +389,11 @@ const SignatureIntegration = () => {
                     onChange={handleSettingChange}
                   />
                   <Form.Text className="text-muted">
-                    Allow signatories to draw their signature using mouse or touchscreen
+                    Allow signatories to draw their signature using mouse or
+                    touchscreen
                   </Form.Text>
                 </Form.Group>
-                
+
                 <Form.Group className="mb-3" controlId="allowSignatureTyping">
                   <Form.Check
                     type="checkbox"
@@ -346,10 +403,11 @@ const SignatureIntegration = () => {
                     onChange={handleSettingChange}
                   />
                   <Form.Text className="text-muted">
-                    Allow signatories to type their signature using different fonts
+                    Allow signatories to type their signature using different
+                    fonts
                   </Form.Text>
                 </Form.Group>
-                
+
                 <Form.Group className="mb-3" controlId="allowSignatureUpload">
                   <Form.Check
                     type="checkbox"
@@ -362,14 +420,14 @@ const SignatureIntegration = () => {
                     Allow signatories to upload an image of their signature
                   </Form.Text>
                 </Form.Group>
-                
+
                 <div className="d-flex justify-content-end mt-4">
                   <Button
                     variant="primary"
                     onClick={saveSettings}
                     disabled={loading}
                   >
-                    {loading ? 'Saving...' : 'Save Settings'}
+                    {loading ? "Saving..." : "Save Settings"}
                   </Button>
                 </div>
               </Form>

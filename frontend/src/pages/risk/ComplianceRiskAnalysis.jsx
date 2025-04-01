@@ -1,22 +1,36 @@
-import React, { useState, useEffect } from 'react';
-import { Container, Row, Col, Card, Button, Alert, Spinner, Table, Badge, ProgressBar, Tabs, Tab, ListGroup } from 'react-bootstrap';
-import { useParams, Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext';
-import riskAnalysisService from '../../services/riskAnalysisService';
-import complianceService from '../../services/complianceService';
+import React, { useState, useEffect } from "react";
+import {
+  Container,
+  Row,
+  Col,
+  Card,
+  Button,
+  Alert,
+  Spinner,
+  Table,
+  Badge,
+  ProgressBar,
+  Tabs,
+  Tab,
+  ListGroup,
+} from "react-bootstrap";
+import { useParams, Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../../hooks/useAuth";
+import riskAnalysisService from "../../services/riskAnalysisService";
+import complianceService from "../../services/complianceService";
 
 const ComplianceRiskAnalysis = () => {
   const { id } = useParams();
   const { currentUser, token } = useAuth();
   const navigate = useNavigate();
-  
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [compliance, setCompliance] = useState(null);
   const [riskAnalysis, setRiskAnalysis] = useState(null);
   const [riskFactors, setRiskFactors] = useState([]);
   const [mitigations, setMitigations] = useState([]);
-  const [activeTab, setActiveTab] = useState('overview');
+  const [activeTab, setActiveTab] = useState("overview");
   const [riskHistory, setRiskHistory] = useState([]);
   const [loadingAction, setLoadingAction] = useState(false);
 
@@ -30,31 +44,48 @@ const ComplianceRiskAnalysis = () => {
     try {
       setLoading(true);
       setError(null);
-      
+
       // Get compliance item details
-      const complianceResponse = await complianceService.getComplianceById(token, id);
+      const complianceResponse = await complianceService.getComplianceById(
+        token,
+        id,
+      );
       setCompliance(complianceResponse.data);
-      
+
       // Get risk analysis for this compliance item
-      const riskResponse = await riskAnalysisService.getComplianceRiskAnalysis(token, id);
+      const riskResponse = await riskAnalysisService.getComplianceRiskAnalysis(
+        token,
+        id,
+      );
       setRiskAnalysis(riskResponse.data);
-      
+
       // Get risk factors for this compliance item
-      const factorsResponse = await riskAnalysisService.getRiskFactors(token, id);
+      const factorsResponse = await riskAnalysisService.getRiskFactors(
+        token,
+        id,
+      );
       setRiskFactors(factorsResponse.data);
-      
+
       // Get risk mitigation recommendations
       if (riskResponse.data?.riskId) {
-        const mitigationsResponse = await riskAnalysisService.getRiskMitigationRecommendations(token, riskResponse.data.riskId);
+        const mitigationsResponse =
+          await riskAnalysisService.getRiskMitigationRecommendations(
+            token,
+            riskResponse.data.riskId,
+          );
         setMitigations(mitigationsResponse.data);
       }
-      
+
       // Get risk analysis history
-      const historyResponse = await riskAnalysisService.getRiskAnalysisHistory(token, 'compliance', id);
+      const historyResponse = await riskAnalysisService.getRiskAnalysisHistory(
+        token,
+        "compliance",
+        id,
+      );
       setRiskHistory(historyResponse.data);
     } catch (err) {
-      console.error('Error fetching compliance risk data:', err);
-      setError('Failed to load risk analysis data. Please try again.');
+      console.error("Error fetching compliance risk data:", err);
+      setError("Failed to load risk analysis data. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -65,16 +96,16 @@ const ComplianceRiskAnalysis = () => {
     try {
       setLoadingAction(true);
       setError(null);
-      
+
       await riskAnalysisService.runComplianceRiskAssessment(token, id);
-      
+
       // Refresh data
       await fetchComplianceAndRiskData();
-      
-      setActiveTab('overview');
+
+      setActiveTab("overview");
     } catch (err) {
-      console.error('Error running risk assessment:', err);
-      setError('Failed to run risk assessment. Please try again.');
+      console.error("Error running risk assessment:", err);
+      setError("Failed to run risk assessment. Please try again.");
     } finally {
       setLoadingAction(false);
     }
@@ -85,17 +116,21 @@ const ComplianceRiskAnalysis = () => {
     try {
       setLoadingAction(true);
       setError(null);
-      
-      await riskAnalysisService.applyRiskMitigation(token, riskAnalysis.riskId, {
-        mitigationId,
-        complianceId: id
-      });
-      
+
+      await riskAnalysisService.applyRiskMitigation(
+        token,
+        riskAnalysis.riskId,
+        {
+          mitigationId,
+          complianceId: id,
+        },
+      );
+
       // Refresh data
       await fetchComplianceAndRiskData();
     } catch (err) {
-      console.error('Error applying mitigation:', err);
-      setError('Failed to apply mitigation strategy. Please try again.');
+      console.error("Error applying mitigation:", err);
+      setError("Failed to apply mitigation strategy. Please try again.");
     } finally {
       setLoadingAction(false);
     }
@@ -104,34 +139,43 @@ const ComplianceRiskAnalysis = () => {
   // Get risk level badge variant
   const getRiskBadgeVariant = (riskLevel) => {
     switch (riskLevel?.toLowerCase()) {
-      case 'high':
-        return 'danger';
-      case 'medium':
-        return 'warning';
-      case 'low':
-        return 'success';
+      case "high":
+        return "danger";
+      case "medium":
+        return "warning";
+      case "low":
+        return "success";
       default:
-        return 'secondary';
+        return "secondary";
     }
   };
 
   // Get risk score color
   const getRiskScoreColor = (score) => {
-    if (score >= 75) return 'danger';
-    if (score >= 50) return 'warning';
-    if (score >= 25) return 'info';
-    return 'success';
+    if (score >= 75) return "danger";
+    if (score >= 50) return "warning";
+    if (score >= 25) return "info";
+    return "success";
   };
 
   // Format date for display
   const formatDate = (dateString) => {
-    const options = { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+    const options = {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    };
     return new Date(dateString).toLocaleString(undefined, options);
   };
 
   if (loading) {
     return (
-      <Container className="d-flex justify-content-center align-items-center" style={{ minHeight: '400px' }}>
+      <Container
+        className="d-flex justify-content-center align-items-center"
+        style={{ minHeight: "400px" }}
+      >
         <div className="text-center">
           <Spinner animation="border" variant="primary" />
           <p className="mt-3 text-muted">Loading risk analysis data...</p>
@@ -147,18 +191,20 @@ const ComplianceRiskAnalysis = () => {
           <div className="d-flex justify-content-between align-items-center mb-2">
             <div>
               <h2 className="mb-1">Risk Analysis: {compliance?.title}</h2>
-              <p className="text-muted">AI-powered risk assessment and mitigation recommendations</p>
+              <p className="text-muted">
+                AI-powered risk assessment and mitigation recommendations
+              </p>
             </div>
             <div>
-              <Button 
-                variant="outline-secondary" 
+              <Button
+                variant="outline-secondary"
                 className="me-2"
                 onClick={() => navigate(`/compliance/${id}`)}
               >
                 <i className="bi bi-arrow-left me-1"></i>
                 Back to Compliance
               </Button>
-              <Button 
+              <Button
                 variant="primary"
                 onClick={runRiskAssessment}
                 disabled={loadingAction}
@@ -177,7 +223,7 @@ const ComplianceRiskAnalysis = () => {
               </Button>
             </div>
           </div>
-          
+
           {error && (
             <Alert variant="danger" onClose={() => setError(null)} dismissible>
               {error}
@@ -197,61 +243,75 @@ const ComplianceRiskAnalysis = () => {
               <Card className="h-100">
                 <Card.Body className="text-center">
                   <h5 className="mb-3">Risk Score</h5>
-                  
+
                   <div className="risk-score-circle mb-3">
-                    <div 
+                    <div
                       className={`risk-score-value bg-${getRiskScoreColor(riskAnalysis?.riskScore || 0)}`}
-                      style={{ fontSize: '2.5rem' }}
+                      style={{ fontSize: "2.5rem" }}
                     >
                       {riskAnalysis?.riskScore || 0}
                     </div>
                   </div>
-                  
-                  <Badge 
-                    bg={getRiskBadgeVariant(riskAnalysis?.riskLevel || 'medium')} 
+
+                  <Badge
+                    bg={getRiskBadgeVariant(
+                      riskAnalysis?.riskLevel || "medium",
+                    )}
                     className="px-3 py-2"
-                    style={{ fontSize: '1rem' }}
+                    style={{ fontSize: "1rem" }}
                   >
-                    {riskAnalysis?.riskLevel || 'Medium'} Risk
+                    {riskAnalysis?.riskLevel || "Medium"} Risk
                   </Badge>
-                  
+
                   <div className="mt-3 text-muted">
-                    Last assessed: {riskAnalysis?.lastUpdated ? formatDate(riskAnalysis.lastUpdated) : 'N/A'}
+                    Last assessed:{" "}
+                    {riskAnalysis?.lastUpdated
+                      ? formatDate(riskAnalysis.lastUpdated)
+                      : "N/A"}
                   </div>
                 </Card.Body>
               </Card>
             </Col>
-            
+
             <Col lg={8}>
               <Card className="h-100">
                 <Card.Body>
                   <h5 className="mb-3">Risk Assessment Summary</h5>
-                  
+
                   <div className="mb-4">
-                    <p>{riskAnalysis?.summary || 'No risk assessment summary available.'}</p>
+                    <p>
+                      {riskAnalysis?.summary ||
+                        "No risk assessment summary available."}
+                    </p>
                   </div>
-                  
+
                   <h6 className="mb-2">Risk Factors</h6>
-                  
+
                   {riskFactors.length === 0 ? (
-                    <p className="text-muted">No specific risk factors identified.</p>
+                    <p className="text-muted">
+                      No specific risk factors identified.
+                    </p>
                   ) : (
                     <div>
                       {riskFactors.slice(0, 3).map((factor) => (
                         <div key={factor.id} className="mb-3">
                           <div className="d-flex justify-content-between align-items-center mb-1">
                             <span className="fw-bold">{factor.name}</span>
-                            <Badge bg={getRiskBadgeVariant(factor.impact)}>{factor.impact}</Badge>
+                            <Badge bg={getRiskBadgeVariant(factor.impact)}>
+                              {factor.impact}
+                            </Badge>
                           </div>
-                          <p className="text-muted small mb-0">{factor.description}</p>
+                          <p className="text-muted small mb-0">
+                            {factor.description}
+                          </p>
                         </div>
                       ))}
-                      
+
                       {riskFactors.length > 3 && (
-                        <Button 
-                          variant="link" 
-                          className="p-0" 
-                          onClick={() => setActiveTab('factors')}
+                        <Button
+                          variant="link"
+                          className="p-0"
+                          onClick={() => setActiveTab("factors")}
                         >
                           View all {riskFactors.length} risk factors
                         </Button>
@@ -275,15 +335,22 @@ const ComplianceRiskAnalysis = () => {
                       <Table className="table-borderless">
                         <tbody>
                           <tr>
-                            <th style={{ width: '30%' }}>Title:</th>
+                            <th style={{ width: "30%" }}>Title:</th>
                             <td>{compliance?.title}</td>
                           </tr>
                           <tr>
                             <th>Status:</th>
                             <td>
-                              <Badge 
-                                bg={compliance?.status?.toLowerCase() === 'completed' ? 'success' : 
-                                   compliance?.status?.toLowerCase() === 'overdue' ? 'danger' : 'warning'}
+                              <Badge
+                                bg={
+                                  compliance?.status?.toLowerCase() ===
+                                  "completed"
+                                    ? "success"
+                                    : compliance?.status?.toLowerCase() ===
+                                        "overdue"
+                                      ? "danger"
+                                      : "warning"
+                                }
                               >
                                 {compliance?.status}
                               </Badge>
@@ -291,14 +358,24 @@ const ComplianceRiskAnalysis = () => {
                           </tr>
                           <tr>
                             <th>Due Date:</th>
-                            <td>{compliance?.dueDate ? formatDate(compliance.dueDate) : 'N/A'}</td>
+                            <td>
+                              {compliance?.dueDate
+                                ? formatDate(compliance.dueDate)
+                                : "N/A"}
+                            </td>
                           </tr>
                           <tr>
                             <th>Priority:</th>
                             <td>
-                              <Badge 
-                                bg={compliance?.priority?.toLowerCase() === 'high' ? 'danger' : 
-                                   compliance?.priority?.toLowerCase() === 'medium' ? 'warning' : 'success'}
+                              <Badge
+                                bg={
+                                  compliance?.priority?.toLowerCase() === "high"
+                                    ? "danger"
+                                    : compliance?.priority?.toLowerCase() ===
+                                        "medium"
+                                      ? "warning"
+                                      : "success"
+                                }
                               >
                                 {compliance?.priority}
                               </Badge>
@@ -311,20 +388,30 @@ const ComplianceRiskAnalysis = () => {
                       <Table className="table-borderless">
                         <tbody>
                           <tr>
-                            <th style={{ width: '30%' }}>Category:</th>
+                            <th style={{ width: "30%" }}>Category:</th>
                             <td>{compliance?.category}</td>
                           </tr>
                           <tr>
                             <th>Assigned To:</th>
-                            <td>{compliance?.assignedTo?.name || 'Unassigned'}</td>
+                            <td>
+                              {compliance?.assignedTo?.name || "Unassigned"}
+                            </td>
                           </tr>
                           <tr>
                             <th>Created:</th>
-                            <td>{compliance?.createdAt ? formatDate(compliance.createdAt) : 'N/A'}</td>
+                            <td>
+                              {compliance?.createdAt
+                                ? formatDate(compliance.createdAt)
+                                : "N/A"}
+                            </td>
                           </tr>
                           <tr>
                             <th>Last Updated:</th>
-                            <td>{compliance?.updatedAt ? formatDate(compliance.updatedAt) : 'N/A'}</td>
+                            <td>
+                              {compliance?.updatedAt
+                                ? formatDate(compliance.updatedAt)
+                                : "N/A"}
+                            </td>
                           </tr>
                         </tbody>
                       </Table>
@@ -344,7 +431,9 @@ const ComplianceRiskAnalysis = () => {
                 <Card.Body>
                   {mitigations.length === 0 ? (
                     <div className="text-center py-3">
-                      <p className="text-muted">No mitigation recommendations available.</p>
+                      <p className="text-muted">
+                        No mitigation recommendations available.
+                      </p>
                     </div>
                   ) : (
                     <ListGroup variant="flush">
@@ -354,7 +443,7 @@ const ComplianceRiskAnalysis = () => {
                             <div>
                               <h6 className="mb-1">{mitigation.title}</h6>
                               <p className="mb-2">{mitigation.description}</p>
-                              
+
                               <div className="d-flex align-items-center small text-muted">
                                 <span className="me-3">
                                   <i className="bi bi-graph-down me-1"></i>
@@ -380,11 +469,15 @@ const ComplianceRiskAnalysis = () => {
                                   </>
                                 ) : loadingAction ? (
                                   <>
-                                    <Spinner animation="border" size="sm" className="me-1" />
+                                    <Spinner
+                                      animation="border"
+                                      size="sm"
+                                      className="me-1"
+                                    />
                                     Applying...
                                   </>
                                 ) : (
-                                  'Apply Mitigation'
+                                  "Apply Mitigation"
                                 )}
                               </Button>
                             </div>
@@ -398,7 +491,7 @@ const ComplianceRiskAnalysis = () => {
             </Col>
           </Row>
         </Tab>
-        
+
         <Tab eventKey="factors" title="Risk Factors">
           <Card>
             <Card.Header>
@@ -407,7 +500,9 @@ const ComplianceRiskAnalysis = () => {
             <Card.Body>
               {riskFactors.length === 0 ? (
                 <div className="text-center py-3">
-                  <p className="text-muted">No risk factors identified for this compliance item.</p>
+                  <p className="text-muted">
+                    No risk factors identified for this compliance item.
+                  </p>
                 </div>
               ) : (
                 <Table responsive>
@@ -424,9 +519,14 @@ const ComplianceRiskAnalysis = () => {
                       <tr key={factor.id}>
                         <td className="fw-bold">{factor.name}</td>
                         <td>
-                          <Badge 
-                            bg={factor.impact.toLowerCase() === 'high' ? 'danger' : 
-                               factor.impact.toLowerCase() === 'medium' ? 'warning' : 'success'}
+                          <Badge
+                            bg={
+                              factor.impact.toLowerCase() === "high"
+                                ? "danger"
+                                : factor.impact.toLowerCase() === "medium"
+                                  ? "warning"
+                                  : "success"
+                            }
                           >
                             {factor.impact}
                           </Badge>
@@ -441,7 +541,7 @@ const ComplianceRiskAnalysis = () => {
             </Card.Body>
           </Card>
         </Tab>
-        
+
         <Tab eventKey="history" title="Assessment History">
           <Card>
             <Card.Header>
@@ -450,7 +550,9 @@ const ComplianceRiskAnalysis = () => {
             <Card.Body>
               {riskHistory.length === 0 ? (
                 <div className="text-center py-3">
-                  <p className="text-muted">No previous risk assessments found.</p>
+                  <p className="text-muted">
+                    No previous risk assessments found.
+                  </p>
                 </div>
               ) : (
                 <Table responsive>
@@ -477,7 +579,7 @@ const ComplianceRiskAnalysis = () => {
                             {history.riskLevel}
                           </Badge>
                         </td>
-                        <td>{history.assessedBy || 'AI System'}</td>
+                        <td>{history.assessedBy || "AI System"}</td>
                         <td>
                           {history.changes ? (
                             <ul className="mb-0 ps-3">
@@ -486,7 +588,7 @@ const ComplianceRiskAnalysis = () => {
                               ))}
                             </ul>
                           ) : (
-                            'Initial assessment'
+                            "Initial assessment"
                           )}
                         </td>
                       </tr>
@@ -497,17 +599,19 @@ const ComplianceRiskAnalysis = () => {
             </Card.Body>
           </Card>
         </Tab>
-        
+
         <Tab eventKey="predictions" title="Risk Predictions">
           <Card>
             <Card.Body>
               <h5 className="mb-4">AI-Based Risk Predictions</h5>
-              
+
               <Alert variant="info">
                 <i className="bi bi-info-circle-fill me-2"></i>
-                Our AI analyzes this compliance item to predict potential future risks. These predictions help you take proactive measures before issues arise.
+                Our AI analyzes this compliance item to predict potential future
+                risks. These predictions help you take proactive measures before
+                issues arise.
               </Alert>
-              
+
               <Table responsive>
                 <thead>
                   <tr>
@@ -523,18 +627,29 @@ const ComplianceRiskAnalysis = () => {
                     <tr key={index}>
                       <td>{prediction.description}</td>
                       <td>
-                        <Badge 
-                          bg={prediction.probability > 75 ? 'danger' : 
-                             prediction.probability > 50 ? 'warning' : 
-                             prediction.probability > 25 ? 'info' : 'success'}
+                        <Badge
+                          bg={
+                            prediction.probability > 75
+                              ? "danger"
+                              : prediction.probability > 50
+                                ? "warning"
+                                : prediction.probability > 25
+                                  ? "info"
+                                  : "success"
+                          }
                         >
                           {prediction.probability}%
                         </Badge>
                       </td>
                       <td>
-                        <Badge 
-                          bg={prediction.impact.toLowerCase() === 'high' ? 'danger' : 
-                             prediction.impact.toLowerCase() === 'medium' ? 'warning' : 'success'}
+                        <Badge
+                          bg={
+                            prediction.impact.toLowerCase() === "high"
+                              ? "danger"
+                              : prediction.impact.toLowerCase() === "medium"
+                                ? "warning"
+                                : "success"
+                          }
                         >
                           {prediction.impact}
                         </Badge>
@@ -543,12 +658,16 @@ const ComplianceRiskAnalysis = () => {
                       <td>{prediction.recommendation}</td>
                     </tr>
                   ))}
-                  
+
                   {/* Fallback if no predictions */}
-                  {(!riskAnalysis?.predictions || riskAnalysis.predictions.length === 0) && (
+                  {(!riskAnalysis?.predictions ||
+                    riskAnalysis.predictions.length === 0) && (
                     <tr>
                       <td colSpan="5" className="text-center py-3">
-                        <p className="text-muted mb-0">No risk predictions available for this compliance item.</p>
+                        <p className="text-muted mb-0">
+                          No risk predictions available for this compliance
+                          item.
+                        </p>
                       </td>
                     </tr>
                   )}

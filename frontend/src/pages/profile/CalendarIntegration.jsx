@@ -1,7 +1,17 @@
-import React, { useState, useEffect } from 'react';
-import { Card, Button, Alert, ListGroup, Badge, Spinner, Form, Tabs, Tab } from 'react-bootstrap';
-import { useAuth } from '../../context/AuthContext';
-import calendarService from '../../services/calendarService';
+import React, { useState, useEffect } from "react";
+import {
+  Card,
+  Button,
+  Alert,
+  ListGroup,
+  Badge,
+  Spinner,
+  Form,
+  Tabs,
+  Tab,
+} from "react-bootstrap";
+import { useAuth } from "../../hooks/useAuth";
+import calendarService from "../../services/calendarService";
 
 const CalendarIntegration = () => {
   const { currentUser, token } = useAuth();
@@ -9,12 +19,12 @@ const CalendarIntegration = () => {
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
   const [connectedCalendars, setConnectedCalendars] = useState([]);
-  const [activeTab, setActiveTab] = useState('connections');
+  const [activeTab, setActiveTab] = useState("connections");
   const [settings, setSettings] = useState({
-    defaultCalendar: '',
-    syncFrequency: 'daily',
+    defaultCalendar: "",
+    syncFrequency: "daily",
     reminderTime: 24,
-    autoSync: true
+    autoSync: true,
   });
 
   // Fetch connected calendars on component mount
@@ -27,17 +37,17 @@ const CalendarIntegration = () => {
     try {
       setLoading(true);
       setError(null);
-      
+
       const response = await calendarService.getConnectedCalendars(token);
       setConnectedCalendars(response.data);
-      
+
       // If there are settings in the response, update state
       if (response.data.settings) {
         setSettings(response.data.settings);
       }
     } catch (err) {
-      console.error('Error fetching connected calendars:', err);
-      setError('Failed to load calendar connections. Please try again.');
+      console.error("Error fetching connected calendars:", err);
+      setError("Failed to load calendar connections. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -48,14 +58,17 @@ const CalendarIntegration = () => {
     try {
       setLoading(true);
       setError(null);
-      
+
       const response = await calendarService.connectGoogleCalendar(token);
-      
+
       // Redirect to Google OAuth consent screen
       window.location.href = response.data.authUrl;
     } catch (err) {
-      console.error('Error connecting to Google Calendar:', err);
-      setError(err.response?.data?.message || 'Failed to connect to Google Calendar. Please try again.');
+      console.error("Error connecting to Google Calendar:", err);
+      setError(
+        err.response?.data?.message ||
+          "Failed to connect to Google Calendar. Please try again.",
+      );
       setLoading(false);
     }
   };
@@ -65,14 +78,17 @@ const CalendarIntegration = () => {
     try {
       setLoading(true);
       setError(null);
-      
+
       const response = await calendarService.connectOutlookCalendar(token);
-      
+
       // Redirect to Microsoft OAuth consent screen
       window.location.href = response.data.authUrl;
     } catch (err) {
-      console.error('Error connecting to Outlook Calendar:', err);
-      setError(err.response?.data?.message || 'Failed to connect to Outlook Calendar. Please try again.');
+      console.error("Error connecting to Outlook Calendar:", err);
+      setError(
+        err.response?.data?.message ||
+          "Failed to connect to Outlook Calendar. Please try again.",
+      );
       setLoading(false);
     }
   };
@@ -82,23 +98,28 @@ const CalendarIntegration = () => {
     try {
       setLoading(true);
       setError(null);
-      
-      if (calendarType === 'google') {
+
+      if (calendarType === "google") {
         await calendarService.disconnectGoogleCalendar(token);
-      } else if (calendarType === 'outlook') {
+      } else if (calendarType === "outlook") {
         await calendarService.disconnectOutlookCalendar(token);
       }
-      
+
       // Refresh connected calendars
       await fetchConnectedCalendars();
-      
-      setSuccess(`Successfully disconnected from ${calendarType === 'google' ? 'Google Calendar' : 'Outlook Calendar'}`);
-      
+
+      setSuccess(
+        `Successfully disconnected from ${calendarType === "google" ? "Google Calendar" : "Outlook Calendar"}`,
+      );
+
       // Clear success message after 3 seconds
       setTimeout(() => setSuccess(null), 3000);
     } catch (err) {
       console.error(`Error disconnecting from ${calendarType}:`, err);
-      setError(err.response?.data?.message || `Failed to disconnect from ${calendarType === 'google' ? 'Google Calendar' : 'Outlook Calendar'}. Please try again.`);
+      setError(
+        err.response?.data?.message ||
+          `Failed to disconnect from ${calendarType === "google" ? "Google Calendar" : "Outlook Calendar"}. Please try again.`,
+      );
     } finally {
       setLoading(false);
     }
@@ -109,16 +130,21 @@ const CalendarIntegration = () => {
     try {
       setLoading(true);
       setError(null);
-      
+
       await calendarService.syncComplianceDeadlines(token, calendarType);
-      
-      setSuccess(`Successfully synced compliance deadlines with ${calendarType === 'google' ? 'Google Calendar' : 'Outlook Calendar'}`);
-      
+
+      setSuccess(
+        `Successfully synced compliance deadlines with ${calendarType === "google" ? "Google Calendar" : "Outlook Calendar"}`,
+      );
+
       // Clear success message after 3 seconds
       setTimeout(() => setSuccess(null), 3000);
     } catch (err) {
       console.error(`Error syncing deadlines with ${calendarType}:`, err);
-      setError(err.response?.data?.message || `Failed to sync deadlines with ${calendarType === 'google' ? 'Google Calendar' : 'Outlook Calendar'}. Please try again.`);
+      setError(
+        err.response?.data?.message ||
+          `Failed to sync deadlines with ${calendarType === "google" ? "Google Calendar" : "Outlook Calendar"}. Please try again.`,
+      );
     } finally {
       setLoading(false);
     }
@@ -129,7 +155,7 @@ const CalendarIntegration = () => {
     const { name, value, type, checked } = e.target;
     setSettings({
       ...settings,
-      [name]: type === 'checkbox' ? checked : value
+      [name]: type === "checkbox" ? checked : value,
     });
   };
 
@@ -138,18 +164,21 @@ const CalendarIntegration = () => {
     try {
       setLoading(true);
       setError(null);
-      
+
       // Call API to save settings
       // This would be implemented in the backend
       // await calendarService.updateSettings(token, settings);
-      
-      setSuccess('Calendar settings saved successfully');
-      
+
+      setSuccess("Calendar settings saved successfully");
+
       // Clear success message after 3 seconds
       setTimeout(() => setSuccess(null), 3000);
     } catch (err) {
-      console.error('Error saving calendar settings:', err);
-      setError(err.response?.data?.message || 'Failed to save calendar settings. Please try again.');
+      console.error("Error saving calendar settings:", err);
+      setError(
+        err.response?.data?.message ||
+          "Failed to save calendar settings. Please try again.",
+      );
     } finally {
       setLoading(false);
     }
@@ -158,19 +187,19 @@ const CalendarIntegration = () => {
   return (
     <div className="calendar-integration-container">
       <h4 className="mb-4">Calendar Integration</h4>
-      
+
       {error && (
         <Alert variant="danger" onClose={() => setError(null)} dismissible>
           {error}
         </Alert>
       )}
-      
+
       {success && (
         <Alert variant="success" onClose={() => setSuccess(null)} dismissible>
           {success}
         </Alert>
       )}
-      
+
       <Tabs
         activeKey={activeTab}
         onSelect={(k) => setActiveTab(k)}
@@ -182,33 +211,58 @@ const CalendarIntegration = () => {
               {loading && !connectedCalendars.length ? (
                 <div className="text-center py-3">
                   <Spinner animation="border" variant="primary" />
-                  <p className="mt-2 text-muted">Loading calendar connections...</p>
+                  <p className="mt-2 text-muted">
+                    Loading calendar connections...
+                  </p>
                 </div>
               ) : (
                 <>
                   <h5 className="mb-3">Connected Calendars</h5>
-                  
+
                   {connectedCalendars.length === 0 ? (
                     <div className="text-center py-3">
-                      <i className="bi bi-calendar3" style={{ fontSize: '2rem', color: '#6c757d' }}></i>
-                      <p className="mt-2 text-muted">No calendars connected yet</p>
+                      <i
+                        className="bi bi-calendar3"
+                        style={{ fontSize: "2rem", color: "#6c757d" }}
+                      ></i>
+                      <p className="mt-2 text-muted">
+                        No calendars connected yet
+                      </p>
                       <p className="small text-muted">
-                        Connect Google Calendar or Outlook to sync your compliance deadlines
+                        Connect Google Calendar or Outlook to sync your
+                        compliance deadlines
                       </p>
                     </div>
                   ) : (
                     <ListGroup variant="flush">
                       {connectedCalendars.map((calendar) => (
-                        <ListGroup.Item key={calendar.id} className="d-flex justify-content-between align-items-center">
+                        <ListGroup.Item
+                          key={calendar.id}
+                          className="d-flex justify-content-between align-items-center"
+                        >
                           <div>
                             <div className="d-flex align-items-center">
-                              {calendar.type === 'google' ? (
-                                <i className="bi bi-google me-2" style={{ fontSize: '1.2rem', color: '#4285F4' }}></i>
+                              {calendar.type === "google" ? (
+                                <i
+                                  className="bi bi-google me-2"
+                                  style={{
+                                    fontSize: "1.2rem",
+                                    color: "#4285F4",
+                                  }}
+                                ></i>
                               ) : (
-                                <i className="bi bi-microsoft me-2" style={{ fontSize: '1.2rem', color: '#00A4EF' }}></i>
+                                <i
+                                  className="bi bi-microsoft me-2"
+                                  style={{
+                                    fontSize: "1.2rem",
+                                    color: "#00A4EF",
+                                  }}
+                                ></i>
                               )}
                               <span className="fw-bold">
-                                {calendar.type === 'google' ? 'Google Calendar' : 'Outlook Calendar'}
+                                {calendar.type === "google"
+                                  ? "Google Calendar"
+                                  : "Outlook Calendar"}
                               </span>
                               {calendar.isDefault && (
                                 <Badge bg="info" className="ms-2">
@@ -220,7 +274,10 @@ const CalendarIntegration = () => {
                               {calendar.email || calendar.accountName}
                               {calendar.lastSynced && (
                                 <span className="ms-2">
-                                  Last synced: {new Date(calendar.lastSynced).toLocaleString()}
+                                  Last synced:{" "}
+                                  {new Date(
+                                    calendar.lastSynced,
+                                  ).toLocaleString()}
                                 </span>
                               )}
                             </div>
@@ -250,11 +307,11 @@ const CalendarIntegration = () => {
                       ))}
                     </ListGroup>
                   )}
-                  
+
                   <div className="mt-4">
                     <h6>Connect a Calendar</h6>
                     <div className="d-flex gap-2 mt-3">
-                      {!connectedCalendars.some(c => c.type === 'google') && (
+                      {!connectedCalendars.some((c) => c.type === "google") && (
                         <Button
                           variant="outline-primary"
                           onClick={connectGoogleCalendar}
@@ -264,8 +321,10 @@ const CalendarIntegration = () => {
                           Connect Google Calendar
                         </Button>
                       )}
-                      
-                      {!connectedCalendars.some(c => c.type === 'outlook') && (
+
+                      {!connectedCalendars.some(
+                        (c) => c.type === "outlook",
+                      ) && (
                         <Button
                           variant="outline-primary"
                           onClick={connectOutlookCalendar}
@@ -282,7 +341,7 @@ const CalendarIntegration = () => {
             </Card.Body>
           </Card>
         </Tab>
-        
+
         <Tab eventKey="settings" title="Calendar Settings">
           <Card>
             <Card.Body>
@@ -295,17 +354,20 @@ const CalendarIntegration = () => {
                     onChange={handleSettingChange}
                   >
                     <option value="">Select a default calendar</option>
-                    {connectedCalendars.map(calendar => (
+                    {connectedCalendars.map((calendar) => (
                       <option key={calendar.id} value={calendar.type}>
-                        {calendar.type === 'google' ? 'Google Calendar' : 'Outlook Calendar'}
+                        {calendar.type === "google"
+                          ? "Google Calendar"
+                          : "Outlook Calendar"}
                       </option>
                     ))}
                   </Form.Select>
                   <Form.Text className="text-muted">
-                    This calendar will be used by default for syncing compliance deadlines
+                    This calendar will be used by default for syncing compliance
+                    deadlines
                   </Form.Text>
                 </Form.Group>
-                
+
                 <Form.Group className="mb-3" controlId="syncFrequency">
                   <Form.Label>Sync Frequency</Form.Label>
                   <Form.Select
@@ -319,10 +381,11 @@ const CalendarIntegration = () => {
                     <option value="monthly">Monthly</option>
                   </Form.Select>
                   <Form.Text className="text-muted">
-                    How often to automatically sync compliance deadlines with your calendar
+                    How often to automatically sync compliance deadlines with
+                    your calendar
                   </Form.Text>
                 </Form.Group>
-                
+
                 <Form.Group className="mb-3" controlId="reminderTime">
                   <Form.Label>Default Reminder Time (Hours)</Form.Label>
                   <Form.Select
@@ -341,7 +404,7 @@ const CalendarIntegration = () => {
                     When to send calendar reminders for compliance deadlines
                   </Form.Text>
                 </Form.Group>
-                
+
                 <Form.Group className="mb-3" controlId="autoSync">
                   <Form.Check
                     type="checkbox"
@@ -354,14 +417,14 @@ const CalendarIntegration = () => {
                     Automatically add new compliance deadlines to your calendar
                   </Form.Text>
                 </Form.Group>
-                
+
                 <div className="d-flex justify-content-end mt-4">
                   <Button
                     variant="primary"
                     onClick={saveSettings}
                     disabled={loading}
                   >
-                    {loading ? 'Saving...' : 'Save Settings'}
+                    {loading ? "Saving..." : "Save Settings"}
                   </Button>
                 </div>
               </Form>
