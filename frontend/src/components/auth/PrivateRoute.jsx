@@ -1,14 +1,17 @@
-import React, { useContext } from 'react';
-import { Navigate } from 'react-router-dom';
-import { AuthContext } from '../../context/AuthContext';
+import React, { useContext } from "react";
+import { Navigate } from "react-router-dom";
+import { useAuth } from "../../hooks/useAuth";
 
 const PrivateRoute = ({ children }) => {
-  const { currentUser, loading } = useContext(AuthContext);
+  const { currentUser, loading } = useAuth();
 
   // Show loading indicator while checking authentication
   if (loading) {
     return (
-      <div className="d-flex justify-content-center align-items-center" style={{ height: '100vh' }}>
+      <div
+        className="d-flex justify-content-center align-items-center"
+        style={{ height: "100vh" }}
+      >
         <div className="spinner-border text-primary" role="status">
           <span className="visually-hidden">Loading...</span>
         </div>
