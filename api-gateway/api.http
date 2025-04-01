@@ -1,0 +1,93 @@
+### Authentication Service
+
+@auth_token = your_jwt_token_after_login
+@user_id = your_user_id_after_login
+
+### Login
+POST http://localhost:8080/api/auth/login
+Content-Type: application/json
+
+{
+    "email": "user@example.com",
+    "password": "yourpassword"
+}
+
+### Register
+POST http://localhost:8080/api/auth/register
+Content-Type: application/json
+
+{
+    "name": "Srini R",
+    "email": "7rsrinicoding@gmail.com",
+    "password": "Auth@717",
+    "roles": ["ROLE_USER"]
+}
+
+### User Management
+
+### Get Current User
+GET http://localhost:8080/api/users/me
+Authorization: Bearer {{auth_token}}
+
+### Get User by ID (Admin only)
+GET http://localhost:8080/api/users/1
+Authorization: Bearer {{auth_token}}
+
+### Update Current User
+PUT http://localhost:8080/api/users/me
+Content-Type: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+    "name": "Updated Name"
+}
+
+### Document Service
+
+### Upload Document
+POST http://localhost:8080/api/documents
+Content-Type: multipart/form-data
+Authorization: Bearer {{auth_token}}
+X-User-Id: {{user_id}}
+
+// Form data:
+// file: @/path/to/your/file
+// description: Document description
+// allowedUsers: ["user1", "user2"]
+
+### Update Document
+PUT http://localhost:8080/api/documents/1
+Content-Type: multipart/form-data
+Authorization: Bearer {{auth_token}}
+X-User-Id: {{user_id}}
+
+// Form data:
+// file: @/path/to/your/file (optional)
+// description: Updated description (optional)
+// allowedUsers: ["user1", "user2"] (optional)
+
+### Get Document
+GET http://localhost:8080/api/documents/1
+Authorization: Bearer {{auth_token}}
+
+### Download Document
+GET http://localhost:8080/api/documents/1/download
+Authorization: Bearer {{auth_token}}
+
+### Delete Document
+DELETE http://localhost:8080/api/documents/1
+Authorization: Bearer {{auth_token}}
+
+### Get All Documents
+GET http://localhost:8080/api/documents
+Authorization: Bearer {{auth_token}}
+
+### Get User Documents
+GET http://localhost:8080/api/documents/user
+Authorization: Bearer {{auth_token}}
+X-User-Id: {{user_id}}
+
+### Update Document Status
+PATCH http://localhost:8080/api/documents/1/status?status=APPROVED
+Authorization: Bearer {{auth_token}}
+X-User-Id: {{user_id}}

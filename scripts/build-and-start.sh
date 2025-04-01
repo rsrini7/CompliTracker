@@ -111,7 +111,7 @@ check_postgres() {
 # Function to check if LocalStack S3 is ready
 check_localstack() {
     echo "Waiting for LocalStack S3 to be ready..."
-    local max_attempts=30
+    local max_attempts=50
     local attempt=1
 
     while [ $attempt -le $max_attempts ]; do
@@ -168,7 +168,7 @@ sleep 15
 # Start API Gateway
 echo "Starting API Gateway..."
 cd api-gateway
-./mvnw spring-boot:run &
+./mvnw spring-boot:run -Dspring-boot.run.profiles=local&
 check_status "Starting API Gateway"
 cd ..
 

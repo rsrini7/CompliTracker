@@ -1,10 +1,7 @@
 package com.complitracker.authservice.security;
 
-import com.complitracker.authservice.security.jwt.AuthEntryPointJwt;
-import com.complitracker.authservice.security.jwt.AuthTokenFilter;
-import com.complitracker.authservice.security.oauth2.CustomOAuth2UserService;
-import com.complitracker.authservice.security.oauth2.OAuth2AuthenticationSuccessHandler;
-import com.complitracker.authservice.security.services.UserDetailsServiceImpl;
+import java.util.Arrays;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,7 +19,11 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import java.util.Arrays;
+import com.complitracker.authservice.security.jwt.AuthEntryPointJwt;
+import com.complitracker.authservice.security.jwt.AuthTokenFilter;
+import com.complitracker.authservice.security.oauth2.CustomOAuth2UserService;
+import com.complitracker.authservice.security.oauth2.OAuth2AuthenticationSuccessHandler;
+import com.complitracker.authservice.security.services.UserDetailsServiceImpl;
 
 @Configuration
 @EnableWebSecurity
@@ -79,10 +80,17 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.cors().and().csrf().disable()
-            .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
+            .exceptionHandling()
+            .authenticationEntryPoint(unauthorizedHandler)
+            .and()
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
             .authorizeRequests()
-            .antMatchers("/api/auth/login", "/api/auth/register", "/api/auth/refreshtoken").permitAll()
+            // Explicitly permit these endpoints
+            .antMatchers(
+                "/login", 
+                "/register", 
+                "/refreshtoken"
+            ).permitAll()
             .antMatchers("/oauth2/**").permitAll()
             .antMatchers("/h2-console/**").permitAll() // For H2 console access
             .anyRequest().authenticated()
@@ -97,7 +105,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .userInfoEndpoint()
                     .oidcUserService(customOAuth2UserService)
                     .and()
-                .successHandler(oAuth2AuthenticationSuccessHandler);
+                .successHandler(oAuth2AuthenticationSuccessHandler)
+            .and()
+            .formLogin().disable();
 
         // For H2 console
         http.headers().frameOptions().disable();

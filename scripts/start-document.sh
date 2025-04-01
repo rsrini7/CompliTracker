@@ -89,7 +89,7 @@ fi
 # Function to check if LocalStack S3 is ready
 check_localstack() {
     echo "Waiting for LocalStack S3 to be ready..."
-    local max_attempts=30
+    local max_attempts=50
     local attempt=1
 
     while [ $attempt -le $max_attempts ]; do

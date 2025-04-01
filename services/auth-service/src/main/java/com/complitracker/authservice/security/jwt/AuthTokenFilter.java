@@ -27,9 +27,34 @@ public class AuthTokenFilter extends OncePerRequestFilter {
     private static final Logger logger = LoggerFactory.getLogger(AuthTokenFilter.class);
 
     @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        String path = request.getRequestURI();
+        String servletPath = request.getServletPath();
+        
+        logger.info("URI: {}, ServletPath: {}", path, servletPath);
+        
+        boolean shouldSkip = servletPath.equals("/login") || 
+                            servletPath.equals("/register") || 
+                            servletPath.equals("/refreshtoken") ||
+                            servletPath.contains("/oauth2/") ||
+                            servletPath.contains("/h2-console/");
+        
+        if (shouldSkip) {
+            logger.info("Bypassing JWT filter for public endpoint: {}", path);
+        }
+        
+        return shouldSkip;
+    }
+
+    @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
         try {
+            String path = request.getRequestURI();
+            String method = request.getMethod();
+            
+            logger.info("Processing request through JWT filter: {} {}", method, path);
+            
             String jwt = parseJwt(request);
             if (jwt != null && jwtUtils.validateJwtToken(jwt)) {
                 String username = jwtUtils.getUserNameFromJwtToken(jwt);
@@ -47,7 +72,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
 
         filterChain.doFilter(request, response);
     }
-
+    
     private String parseJwt(HttpServletRequest request) {
         String headerAuth = request.getHeader("Authorization");
 

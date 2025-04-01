@@ -107,7 +107,7 @@ check_status "Maven build for Auth Service"
 
 # Start Auth Service
 echo "Starting Auth Service..."
-./mvnw spring-boot:run &
+./mvnw spring-boot:run&
 check_status "Starting Auth Service"
 
 # Wait for Auth Service to be healthy

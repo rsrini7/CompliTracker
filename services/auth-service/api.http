@@ -1,0 +1,50 @@
+### Auth Service API Tests
+
+@baseUrl = http://localhost:8081/api/auth
+@authToken = {{login.response.body.accessToken}}
+
+### Register a new user
+POST {{baseUrl}}/register
+Content-Type: application/json
+
+{
+    "name": "Test User",
+    "email": "test@example.com",
+    "password": "password123",
+    "roles": ["ROLE_USER"]
+}
+
+### Login
+# @name login
+POST {{baseUrl}}/login
+Content-Type: application/json
+
+{
+    "email": "test@example.com",
+    "password": "password123"
+}
+
+### Refresh Token
+POST {{baseUrl}}/refreshtoken
+Content-Type: application/json
+
+{
+    "refreshToken": "{{login.response.body.refreshToken}}"
+}
+
+### Get Current User Profile
+GET {{baseUrl}}/api/users/me
+Authorization: Bearer {{authToken}}
+
+### Get User by ID (Admin Only)
+GET {{baseUrl}}/api/users/1
+Authorization: Bearer {{authToken}}
+
+### Update Current User Profile
+PUT {{baseUrl}}/api/users/me
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+    "name": "Updated Name"
+}

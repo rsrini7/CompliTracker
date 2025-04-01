@@ -25,6 +25,13 @@ public class JwtTokenFilter extends AbstractGatewayFilterFactory<JwtTokenFilter.
     public GatewayFilter apply(Config config) {
         return (exchange, chain) -> {
             ServerHttpRequest request = exchange.getRequest();
+            String path = request.getPath().value();
+
+            // Skip authentication for public endpoints
+            if (path.startsWith("/api/auth/") || path.startsWith("/actuator/") || 
+                path.startsWith("/fallback/") || path.startsWith("/api/public/")) {
+                return chain.filter(exchange);
+            }
 
             if (!request.getHeaders().containsKey("Authorization")) {
                 return onError(exchange, "No Authorization header", HttpStatus.UNAUTHORIZED);

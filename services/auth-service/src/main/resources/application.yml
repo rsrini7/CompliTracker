@@ -24,6 +24,13 @@ spring:
       data-locations: classpath:data.sql
       continue-on-error: false
   security:
+    filter:
+      dispatcher-types:
+        - ASYNC
+        - FORWARD
+        - REQUEST
+        - ERROR
+        - INCLUDE
     oauth2:
       client:
         registration:
