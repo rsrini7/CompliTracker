@@ -1,0 +1,84 @@
+### Core Service API Tests
+
+@baseUrl = http://localhost:8082/api/core
+
+### Risk Analysis
+POST {{baseUrl}}/risk-analysis/analyze
+Content-Type: application/json
+
+{
+    "complianceItem": {
+        "id": "sample-id",
+        "description": "Sample compliance item"
+    }
+}
+
+### Get Risk Factors
+GET {{baseUrl}}/risk-analysis/risk-factors
+
+### Calendar Integration
+POST {{baseUrl}}/calendar/create-event
+Content-Type: application/json
+
+{
+    "complianceItem": {
+        "id": "sample-id",
+        "description": "Sample compliance item"
+    }
+}
+?userId=user123
+
+### AI Risk Assessment
+POST {{baseUrl}}/risk-assessment/assess
+Content-Type: application/json
+
+{
+    "complianceItem": {
+        "id": "sample-id",
+        "description": "Sample compliance item"
+    }
+}
+
+### Digital Signature
+POST {{baseUrl}}/digital-signature/create-request
+Content-Type: application/json
+
+{
+    "document": {
+        "id": "doc123",
+        "title": "Sample Document"
+    },
+    "signers": ["user1@example.com", "user2@example.com"],
+    "provider": "DOCUSIGN"
+}
+
+### Notification
+POST {{baseUrl}}/notification/send-status
+Content-Type: application/json
+
+{
+    "signatureRequest": {
+        "id": "req123",
+        "status": "COMPLETED"
+    }
+}
+
+POST {{baseUrl}}/notification/send-reminder
+Content-Type: application/json
+
+{
+    "signatureRequest": {
+        "id": "req123",
+        "recipientEmail": "user@example.com"
+    }
+}
+
+POST {{baseUrl}}/notification/send-error
+Content-Type: application/json
+
+{
+    "signatureRequest": {
+        "id": "req123",
+        "recipientEmail": "user@example.com"
+    }
+}
