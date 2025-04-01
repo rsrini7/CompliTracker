@@ -10,7 +10,7 @@ Content-Type: application/json
     "name": "Test User",
     "email": "test@example.com",
     "password": "password123",
-    "roles": ["ROLE_USER"]
+    "roles": ["ROLE_ADMIN"]
 }
 
 ### Login
