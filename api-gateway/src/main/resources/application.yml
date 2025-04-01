@@ -45,7 +45,7 @@ spring:
         - id: email-service
           uri: lb://email-service
           predicates:
-            - Path=/api/email/**
+            - Path=/api/emails/**
           filters:
             - name: JwtTokenFilter
 
