@@ -10,7 +10,7 @@ Content-Type: application/json
     "name": "Test User",
     "email": "test@example.com",
     "password": "password123",
-    "roles": ["ROLE_ADMIN"]
+    "roles": ["user","admin"]
 }
 
 ### Login
@@ -44,8 +44,10 @@ Content-Type: application/json
 GET {{baseUrl}}/api/users/me
 Authorization: Bearer {{authToken}}
 
+@userId = 1
+
 ### Get User by ID (Admin Only)
-GET {{baseUrl}}/api/users/1
+GET {{baseUrl}}/api/users/{{userId}}
 Authorization: Bearer {{authToken}}
 
 ### Update Current User Profile
