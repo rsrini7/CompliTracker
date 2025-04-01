@@ -1,16 +1,16 @@
 ### Variables
-@baseUrl = http://localhost:8083/api/documents
+@baseDocumentUrl = http://localhost:8083/api/documents
 @documentId = 3
 @userId = user@example.com
-@token = Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyQGV4YW1wbGUuY29tIiwicm9sZXMiOlsiUk9MRV9VU0VSIl0sImlhdCI6MTc0MzUwOTIyOSwiZXhwIjoxNzQzNTk1NjI5fQ.9rfpeK2pQ4p0f90c9-eD5A3oGPkwkm3ohfjqihlc5uQf2kcVLRXTQjDFdrFf4V0G6Bg4iWujv5bBlOdKRNYaKw
+@authToken = Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyQGV4YW1wbGUuY29tIiwicm9sZXMiOlsiUk9MRV9VU0VSIl0sImlhdCI6MTc0MzUwOTIyOSwiZXhwIjoxNzQzNTk1NjI5fQ.9rfpeK2pQ4p0f90c9-eD5A3oGPkwkm3ohfjqihlc5uQf2kcVLRXTQjDFdrFf4V0G6Bg4iWujv5bBlOdKRNYaKw
 
 ### Upload Document
 # Requires a multipart/form-data request
 # Use your HTTP client's features to attach a file and form fields
-POST {{baseUrl}}
+POST {{baseDocumentUrl}}
 Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
 X-User-Id: {{userId}}
-Authorization: {{token}}
+Authorization: {{authToken}}
 
 ------WebKitFormBoundary7MA4YWxkTrZu0gW
 Content-Disposition: form-data; name="file"; filename="dummy.pdf"
@@ -37,10 +37,10 @@ admin789
 ### Update Document
 # Requires a multipart/form-data request (if updating the file)
 # Use your HTTP client's features to attach a file and form fields
-PUT {{baseUrl}}/{{documentId}}
+PUT {{baseDocumentUrl}}/{{documentId}}
 Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
 X-User-Id: {{userId}}
-Authorization: {{token}}
+Authorization: {{authToken}}
 
 # Optional file part:
 # ------WebKitFormBoundary7MA4YWxkTrZu0gW
@@ -66,28 +66,33 @@ admin_updated
 ------WebKitFormBoundary7MA4YWxkTrZu0gW--
 
 ### Get Document by ID
-GET {{baseUrl}}/{{documentId}}
-Authorization: {{token}}
+GET {{baseDocumentUrl}}/{{documentId}}
+Authorization: {{authToken}}
 
 ### Download Document by ID
-GET {{baseUrl}}/{{documentId}}/download
-Authorization: {{token}}
+GET {{baseDocumentUrl}}/{{documentId}}/download
+Authorization: {{authToken}}
 
 ### Delete Document by ID
-DELETE {{baseUrl}}/{{documentId}}
-Authorization: {{token}}
+DELETE {{baseDocumentUrl}}/{{documentId}}
+Authorization: {{authToken}}
 
 ### Get All Documents (Paginated)
-GET {{baseUrl}}?page=0&size=10&sort=updatedAt,desc
-Authorization: {{token}}
+GET {{baseDocumentUrl}}?page=0&size=10&sort=updatedAt,desc
+Authorization: {{authToken}}
 
 ### Get User Documents (Paginated)
-GET {{baseUrl}}/user?page=0&size=5
+GET {{baseDocumentUrl}}/user?page=0&size=5
 X-User-Id: {{userId}}
-Authorization: {{token}}
+Authorization: {{authToken}}
 
 ### Update Document Status
 # Possible statuses: PENDING, APPROVED, REJECTED (Adjust based on DocumentStatus enum)
-PATCH {{baseUrl}}/{{documentId}}/status?status=APPROVED
+PATCH {{baseDocumentUrl}}/{{documentId}}/status?status=APPROVED
 X-User-Id: {{userId}}
-Authorization: {{token}} 
+Authorization: {{authToken}} 
+
+### Get User Documents
+GET {{baseDocumentUrl}}/user
+Authorization: Bearer {{authToken}}
+X-User-Id: {{userId}}

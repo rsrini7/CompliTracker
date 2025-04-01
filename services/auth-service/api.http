@@ -1,9 +1,11 @@
 ### Auth Service API Tests
 
-@baseUrl = http://localhost:8081
+@baseUrl = http://localhost:8081/api/auth
+
+@authToken = {{login.response.body.token}}
 
 ### Register a new user
-POST {{baseUrl}}/api/auth/register
+POST {{baseUrl}}/register
 Content-Type: application/json
 
 {
@@ -15,15 +17,13 @@ Content-Type: application/json
 
 ### Login
 # @name login
-POST {{baseUrl}}/api/auth/login
+POST {{baseUrl}}/login
 Content-Type: application/json
 
 {
     "email": "test@example.com",
     "password": "password123"
 }
-
-@authToken = {{login.response.body.token}}
 
 > {%
     const capturedToken = request.variables.get("authToken");
@@ -33,7 +33,7 @@ Content-Type: application/json
 %}
 
 ### Refresh Token
-POST {{baseUrl}}/api/auth/refreshtoken
+POST {{baseUrl}}/refreshtoken
 Content-Type: application/json
 
 {

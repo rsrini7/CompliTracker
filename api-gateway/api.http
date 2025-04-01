@@ -1,10 +1,15 @@
-### Authentication Service
+### Variables
 
 @authToken = {{login.response.body.token}}
-@user_id = 1
+@baseDocumentUrl = http://localhost:8080/api/documents
+@baseAuthUrl = http://localhost:8080/api/auth
+@documentId = 3
+@userId = user@example.com
+
+### Authentication Service
 
 ### Register
-POST http://localhost:8080/api/auth/register
+POST {{baseAuthUrl}}/register
 Content-Type: application/json
 
 {
@@ -16,7 +21,7 @@ Content-Type: application/json
 
 ### Login
 # @name login
-POST http://localhost:8080/api/auth/login
+POST {{baseAuthUrl}}/login
 Content-Type: application/json
 
 {
@@ -24,20 +29,33 @@ Content-Type: application/json
     "password": "yourpassword"
 }
 
+### Refresh Token
+POST {{baseAuthUrl}}/refreshtoken
+Content-Type: application/json
 
+{
+    "refreshToken": "{{login.response.body.refreshToken}}"
+}
+
+> {%
+    const capturedToken = request.variables.get("authToken");
+    console.log("------------------------------------------");
+    console.log("DEBUG: authToken value:", capturedToken);
+    console.log("------------------------------------------");
+%}
 
 ### User Management
 
 ### Get Current User
-GET http://localhost:8080/api/users/me
+GET {{baseAuthUrl}}/me
 Authorization: Bearer {{authToken}}
 
 ### Get User by ID (Admin only)
-GET http://localhost:8080/api/users/1
+GET {{baseAuthUrl}}/{{userId}}
 Authorization: Bearer {{authToken}}
 
 ### Update Current User
-PUT http://localhost:8080/api/users/me
+PUT {{baseAuthUrl}}/me
 Content-Type: application/json
 Authorization: Bearer {{authToken}}
 
@@ -48,49 +66,94 @@ Authorization: Bearer {{authToken}}
 ### Document Service
 
 ### Upload Document
-POST http://localhost:8080/api/documents
-Content-Type: multipart/form-data
-Authorization: Bearer {{authToken}}
-X-User-Id: {{user_id}}
+# Requires a multipart/form-data request
+# Use your HTTP client's features to attach a file and form fields
+POST {{baseDocumentUrl}}
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+X-User-Id: {{userId}}
+Authorization: {{authToken}}
 
-// Form data:
-// file: @/path/to/your/file
-// description: Document description
-// allowedUsers: ["user1", "user2"]
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="file"; filename="dummy.pdf"
+Content-Type: application/pdf
+
+< ./Users/srini/Downloads/dummy.pdf
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="description"
+
+This is an example document description.
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="allowedUsers"
+
+user456
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="allowedUsers"
+
+admin789
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
 
 ### Update Document
-PUT http://localhost:8080/api/documents/1
-Content-Type: multipart/form-data
-Authorization: Bearer {{authToken}}
-X-User-Id: {{user_id}}
+# Requires a multipart/form-data request (if updating the file)
+# Use your HTTP client's features to attach a file and form fields
+PUT {{baseDocumentUrl}}/{{documentId}}
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+X-User-Id: {{userId}}
+Authorization: {{authToken}}
 
-// Form data:
-// file: @/path/to/your/file (optional)
-// description: Updated description (optional)
-// allowedUsers: ["user1", "user2"] (optional)
+# Optional file part:
+# ------WebKitFormBoundary7MA4YWxkTrZu0gW
+# Content-Disposition: form-data; name="file"; filename="updated_example.docx"
+# Content-Type: application/vnd.openxmlformats-officedocument.wordprocessingml.document
+#
+# < ./path/to/your/updated_example.docx
 
-### Get Document
-GET http://localhost:8080/api/documents/1
-Authorization: Bearer {{authToken}}
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="description"
 
-### Download Document
-GET http://localhost:8080/api/documents/1/download
-Authorization: Bearer {{authToken}}
+Updated document description.
 
-### Delete Document
-DELETE http://localhost:8080/api/documents/1
-Authorization: Bearer {{authToken}}
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="allowedUsers"
 
-### Get All Documents
-GET http://localhost:8080/api/documents
-Authorization: Bearer {{authToken}}
+user_new
 
-### Get User Documents
-GET http://localhost:8080/api/documents/user
-Authorization: Bearer {{authToken}}
-X-User-Id: {{user_id}}
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="allowedUsers"
+
+admin_updated
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
+### Get Document by ID
+GET {{baseDocumentUrl}}/{{documentId}}
+Authorization: {{authToken}}
+
+### Download Document by ID
+GET {{baseDocumentUrl}}/{{documentId}}/download
+Authorization: {{authToken}}
+
+### Delete Document by ID
+DELETE {{baseDocumentUrl}}/{{documentId}}
+Authorization: {{authToken}}
+
+### Get All Documents (Paginated)
+GET {{baseDocumentUrl}}?page=0&size=10&sort=updatedAt,desc
+Authorization: {{authToken}}
+
+### Get User Documents (Paginated)
+GET {{baseDocumentUrl}}/user?page=0&size=5
+X-User-Id: {{userId}}
+Authorization: {{authToken}}
 
 ### Update Document Status
-PATCH http://localhost:8080/api/documents/1/status?status=APPROVED
+# Possible statuses: PENDING, APPROVED, REJECTED (Adjust based on DocumentStatus enum)
+PATCH {{baseDocumentUrl}}/{{documentId}}/status?status=APPROVED
+X-User-Id: {{userId}}
+Authorization: {{authToken}} 
+
+### Get User Documents
+GET {{baseDocumentUrl}}/user
 Authorization: Bearer {{authToken}}
-X-User-Id: {{user_id}}
+X-User-Id: {{userId}}
