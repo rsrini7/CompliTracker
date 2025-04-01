@@ -17,15 +17,15 @@ public class CorsConfig implements WebMvcConfigurer {
             .allowedOriginPatterns("*") // Using pattern instead of specific origins
             .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
             .allowedHeaders("*")
-            .allowCredentials(true);
+            .allowCredentials(false);
     }
     
     @Bean
     public CorsFilter corsFilter() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowCredentials(true);
-        config.addAllowedOrigin("*"); // Your frontend URL
+        config.setAllowCredentials(false);
+        config.addAllowedOriginPattern("*"); // Allow all origins using pattern
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
         source.registerCorsConfiguration("/**", config);

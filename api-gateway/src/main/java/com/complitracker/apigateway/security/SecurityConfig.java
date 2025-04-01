@@ -24,7 +24,9 @@ public class SecurityConfig {
     public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
         return http
             .csrf().disable()
-            .cors().configurationSource(corsConfigurationSource()).and()
+            .cors()
+            // .configurationSource(corsConfigurationSource())
+            .and()
             .authorizeExchange()
                 .pathMatchers("/api/auth/**").permitAll()
                 .pathMatchers("/actuator/**").permitAll()
@@ -39,24 +41,24 @@ public class SecurityConfig {
             .build();
     }
 
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration corsConfig = new CorsConfiguration();
-        corsConfig.setAllowedOriginPatterns(Arrays.asList("http://localhost:[*]", "https://*.complitracker.com"));
-        corsConfig.setMaxAge(3600L);
-        corsConfig.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
-        corsConfig.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "X-Requested-With", "Accept"));
-        corsConfig.setExposedHeaders(Arrays.asList("Authorization"));
-        corsConfig.setAllowCredentials(true);
+    // @Bean
+    // public CorsConfigurationSource corsConfigurationSource() {
+    //     CorsConfiguration corsConfig = new CorsConfiguration();
+    //     corsConfig.setAllowedOriginPatterns(Arrays.asList("http://localhost:[*]", "https://*.complitracker.com"));
+    //     corsConfig.setMaxAge(3600L);
+    //     corsConfig.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
+    //     corsConfig.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "X-Requested-With", "Accept"));
+    //     corsConfig.setExposedHeaders(Arrays.asList("Authorization"));
+    //     corsConfig.setAllowCredentials(true);
 
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", corsConfig);
+    //     UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+    //     source.registerCorsConfiguration("/**", corsConfig);
 
-        return source;
-    }
+    //     return source;
+    // }
     
-    @Bean
-    public CorsWebFilter corsWebFilter() {
-        return new CorsWebFilter(corsConfigurationSource());
-    }
+    // @Bean
+    // public CorsWebFilter corsWebFilter() {
+    //     return new CorsWebFilter(corsConfigurationSource());
+    // }
 }
