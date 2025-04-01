@@ -1,51 +1,28 @@
 -- Document Service Schema
 
 -- Drop existing tables
-DROP TABLE IF EXISTS document_shares;
-DROP TABLE IF EXISTS document_tags;
-DROP TABLE IF EXISTS document_versions;
+DROP TABLE IF EXISTS document_access_control;
 DROP TABLE IF EXISTS documents;
 
 -- Create documents table
 CREATE TABLE IF NOT EXISTS documents (
     id SERIAL PRIMARY KEY,
-    title VARCHAR(255) NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    s3_key VARCHAR(255) NOT NULL,
     description TEXT,
-    file_path VARCHAR(500) NOT NULL,
-    file_type VARCHAR(100),
-    file_size BIGINT,
-    uploaded_by VARCHAR(100),
+    content_type VARCHAR(100) NOT NULL,
+    size BIGINT NOT NULL,
+    version INTEGER NOT NULL,
+    status VARCHAR(50) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_by VARCHAR(100),
+    last_modified_by VARCHAR(100)
 );
 
--- Create document_versions table
-CREATE TABLE IF NOT EXISTS document_versions (
-    id SERIAL PRIMARY KEY,
-    document_id INTEGER REFERENCES documents(id),
-    version_number INTEGER NOT NULL,
-    file_path VARCHAR(500) NOT NULL,
-    file_size BIGINT,
-    modified_by VARCHAR(100),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    change_log TEXT
-);
-
--- Create document_tags table
-CREATE TABLE IF NOT EXISTS document_tags (
-    id SERIAL PRIMARY KEY,
-    document_id INTEGER REFERENCES documents(id),
-    tag_name VARCHAR(100) NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
--- Create document_shares table
-CREATE TABLE IF NOT EXISTS document_shares (
-    id SERIAL PRIMARY KEY,
-    document_id INTEGER REFERENCES documents(id),
-    shared_with VARCHAR(100) NOT NULL,
-    permission_level VARCHAR(50) NOT NULL,
-    shared_by VARCHAR(100),
-    shared_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    expiry_date TIMESTAMP
+-- Create document_access_control table for managing document access
+CREATE TABLE IF NOT EXISTS document_access_control (
+    document_id BIGINT REFERENCES documents(id),
+    allowed_users VARCHAR(255),
+    PRIMARY KEY (document_id, allowed_users)
 );

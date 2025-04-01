@@ -1,9 +1,21 @@
 ### Authentication Service
 
-@auth_token = your_jwt_token_after_login
-@user_id = your_user_id_after_login
+@authToken = {{login.response.body.token}}
+@user_id = 1
+
+### Register
+POST http://localhost:8080/api/auth/register
+Content-Type: application/json
+
+{
+    "name": "AUser",
+    "email": "user@example.com",
+    "password": "yourpassword",
+    "roles": ["USER","ADMIN"]
+}
 
 ### Login
+# @name login
 POST http://localhost:8080/api/auth/login
 Content-Type: application/json
 
@@ -12,31 +24,22 @@ Content-Type: application/json
     "password": "yourpassword"
 }
 
-### Register
-POST http://localhost:8080/api/auth/register
-Content-Type: application/json
 
-{
-    "name": "Srini R",
-    "email": "7rsrinicoding@gmail.com",
-    "password": "Auth@717",
-    "roles": ["ROLE_USER"]
-}
 
 ### User Management
 
 ### Get Current User
 GET http://localhost:8080/api/users/me
-Authorization: Bearer {{auth_token}}
+Authorization: Bearer {{authToken}}
 
 ### Get User by ID (Admin only)
 GET http://localhost:8080/api/users/1
-Authorization: Bearer {{auth_token}}
+Authorization: Bearer {{authToken}}
 
 ### Update Current User
 PUT http://localhost:8080/api/users/me
 Content-Type: application/json
-Authorization: Bearer {{auth_token}}
+Authorization: Bearer {{authToken}}
 
 {
     "name": "Updated Name"
@@ -47,7 +50,7 @@ Authorization: Bearer {{auth_token}}
 ### Upload Document
 POST http://localhost:8080/api/documents
 Content-Type: multipart/form-data
-Authorization: Bearer {{auth_token}}
+Authorization: Bearer {{authToken}}
 X-User-Id: {{user_id}}
 
 // Form data:
@@ -58,7 +61,7 @@ X-User-Id: {{user_id}}
 ### Update Document
 PUT http://localhost:8080/api/documents/1
 Content-Type: multipart/form-data
-Authorization: Bearer {{auth_token}}
+Authorization: Bearer {{authToken}}
 X-User-Id: {{user_id}}
 
 // Form data:
@@ -68,26 +71,26 @@ X-User-Id: {{user_id}}
 
 ### Get Document
 GET http://localhost:8080/api/documents/1
-Authorization: Bearer {{auth_token}}
+Authorization: Bearer {{authToken}}
 
 ### Download Document
 GET http://localhost:8080/api/documents/1/download
-Authorization: Bearer {{auth_token}}
+Authorization: Bearer {{authToken}}
 
 ### Delete Document
 DELETE http://localhost:8080/api/documents/1
-Authorization: Bearer {{auth_token}}
+Authorization: Bearer {{authToken}}
 
 ### Get All Documents
 GET http://localhost:8080/api/documents
-Authorization: Bearer {{auth_token}}
+Authorization: Bearer {{authToken}}
 
 ### Get User Documents
 GET http://localhost:8080/api/documents/user
-Authorization: Bearer {{auth_token}}
+Authorization: Bearer {{authToken}}
 X-User-Id: {{user_id}}
 
 ### Update Document Status
 PATCH http://localhost:8080/api/documents/1/status?status=APPROVED
-Authorization: Bearer {{auth_token}}
+Authorization: Bearer {{authToken}}
 X-User-Id: {{user_id}}

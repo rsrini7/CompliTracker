@@ -14,6 +14,8 @@ import java.net.URI;
 @Configuration
 @ConditionalOnProperty(prefix = "aws", name = "accessKeyId")
 public class S3Config {
+    @Value("${aws.s3.bucket-name}")
+    private String bucketName;
     @Value("${aws.accessKeyId}")
     private String accessKeyId;
 
@@ -37,6 +39,16 @@ public class S3Config {
             builder.endpointOverride(URI.create(s3Endpoint));
         }
 
-        return builder.build();
+        S3Client client = builder.build();
+        ensureBucketExists(client);
+        return client;
+    }
+
+    private void ensureBucketExists(S3Client s3Client) {
+        try {
+            s3Client.headBucket(b -> b.bucket(bucketName));
+        } catch (software.amazon.awssdk.services.s3.model.NoSuchBucketException e) {
+            s3Client.createBucket(b -> b.bucket(bucketName));
+        }
     }
 }

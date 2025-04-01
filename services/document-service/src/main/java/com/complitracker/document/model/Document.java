@@ -22,7 +22,7 @@ public class Document {
     @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false)
+    @Column(nullable = false, name = "s3_key")
     private String s3Key;
 
     private String description;

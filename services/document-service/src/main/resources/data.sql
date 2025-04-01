@@ -1,31 +1,18 @@
 -- Document Service Initial Data
 
 -- Insert sample documents
-INSERT INTO documents (title, description, file_path, file_type, file_size, uploaded_by)
+INSERT INTO documents (name, s3_key, description, content_type, size, version, status, created_by, last_modified_by)
 VALUES
-    ('Privacy Policy', 'Company privacy policy document', '/documents/privacy-policy.pdf', 'application/pdf', 1024576, 'admin@company.com'),
-    ('Security Protocol', 'Internal security guidelines', '/documents/security-protocol.docx', 'application/msword', 2048576, 'security.admin@company.com'),
-    ('Compliance Report 2023', 'Annual compliance report', '/documents/compliance-report-2023.pdf', 'application/pdf', 3145728, 'compliance.officer@company.com');
+    ('Privacy Policy', 'documents/privacy-policy.pdf', 'Company privacy policy document', 'application/pdf', 1024576, 1, 'ACTIVE', 'admin@company.com', 'admin@company.com'),
+    ('Security Protocol', 'documents/security-protocol.docx', 'Internal security guidelines', 'application/msword', 2048576, 1, 'ACTIVE', 'security.admin@company.com', 'security.admin@company.com'),
+    ('Compliance Report 2023', 'documents/compliance-report-2023.pdf', 'Annual compliance report', 'application/pdf', 3145728, 1, 'ACTIVE', 'compliance.officer@company.com', 'compliance.officer@company.com');
 
--- Insert document versions
-INSERT INTO document_versions (document_id, version_number, file_path, file_size, modified_by, change_log)
+-- Insert document access control entries
+INSERT INTO document_access_control (document_id, allowed_users)
 VALUES
-    (1, 1, '/documents/versions/privacy-policy-v1.pdf', 1024576, 'admin@company.com', 'Initial version'),
-    (1, 2, '/documents/versions/privacy-policy-v2.pdf', 1048576, 'legal.team@company.com', 'Updated GDPR compliance sections');
-
--- Insert document tags
-INSERT INTO document_tags (document_id, tag_name)
-VALUES
-    (1, 'Privacy'),
-    (1, 'Legal'),
-    (2, 'Security'),
-    (2, 'Internal'),
-    (3, 'Compliance'),
-    (3, 'Report');
-
--- Insert document shares
-INSERT INTO document_shares (document_id, shared_with, permission_level, shared_by)
-VALUES
-    (1, 'legal.team@company.com', 'EDIT', 'admin@company.com'),
-    (2, 'security.team@company.com', 'VIEW', 'security.admin@company.com'),
-    (3, 'auditor@company.com', 'VIEW', 'compliance.officer@company.com');
+    (1, 'admin@company.com'),
+    (1, 'legal.team@company.com'),
+    (2, 'security.admin@company.com'),
+    (2, 'security.team@company.com'),
+    (3, 'compliance.officer@company.com'),
+    (3, 'auditor@company.com');
