@@ -33,10 +33,9 @@ public class AuthTokenFilter extends OncePerRequestFilter {
         
         logger.info("URI: {}, ServletPath: {}", path, servletPath);
         
-        boolean shouldSkip = servletPath.equals("/login") || 
-                            servletPath.equals("/register") || 
-                            servletPath.equals("/refreshtoken") ||
-                            servletPath.contains("/oauth2/") ||
+        boolean shouldSkip = servletPath.endsWith("/api/auth/login") ||
+                            servletPath.endsWith("/api/auth/register") ||
+                            servletPath.endsWith("/api/auth/refreshtoken") ||
                             servletPath.contains("/h2-console/");
         
         if (shouldSkip) {

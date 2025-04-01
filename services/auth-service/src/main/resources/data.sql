@@ -5,15 +5,15 @@ INSERT INTO roles (name) VALUES ('ROLE_COMPLIANCE_MANAGER') ON CONFLICT (name) D
 INSERT INTO roles (name) VALUES ('ROLE_DOCUMENT_MANAGER') ON CONFLICT (name) DO NOTHING;
 
 -- Insert default admin user (password is 'admin123' - should be changed in production)
-INSERT INTO users (id, email, password_hash, first_name, last_name, created_at, updated_at)
+INSERT INTO users (email, password, name, created_at, updated_at, active, enabled)
 SELECT
-    '550e8400-e29b-41d4-a716-446655440000'::uuid,
     'admin@complitracker.com',
     '$2a$10$rBV2JDeWW3.vKyeQo0pJ8eO/BZQZk5.wQZhF8wIOBGz7EHJXcS9Fa',
-    'System',
-    'Admin',
+    'System Admin',
     CURRENT_TIMESTAMP,
-    CURRENT_TIMESTAMP
+    CURRENT_TIMESTAMP,
+    true,
+    true
 WHERE NOT EXISTS (
     SELECT 1 FROM users WHERE email = 'admin@complitracker.com'
 );
@@ -21,10 +21,13 @@ WHERE NOT EXISTS (
 -- Associate admin user with ROLE_ADMIN
 INSERT INTO user_roles (user_id, role_id)
 SELECT
-    '550e8400-e29b-41d4-a716-446655440000'::uuid,
-    id
-FROM roles
-WHERE name = 'ROLE_ADMIN'
-AND EXISTS (
-    SELECT 1 FROM users WHERE id = '550e8400-e29b-41d4-a716-446655440000'::uuid
+    u.id,
+    r.id
+FROM users u
+CROSS JOIN roles r
+WHERE u.email = 'admin@complitracker.com'
+AND r.name = 'ROLE_ADMIN'
+AND NOT EXISTS (
+    SELECT 1 FROM user_roles
+    WHERE user_id = u.id AND role_id = r.id
 );

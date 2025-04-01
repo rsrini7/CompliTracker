@@ -1,7 +1,7 @@
 ### Auth Service API Tests
+@authToken = {{login.response.body.accessToken}}
 
 @baseUrl = http://localhost:8081/api/auth
-@authToken = {{login.response.body.accessToken}}
 
 ### Register a new user
 POST {{baseUrl}}/register

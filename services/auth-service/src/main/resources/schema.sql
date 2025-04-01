@@ -13,21 +13,21 @@ CREATE TABLE IF NOT EXISTS roles (
 
 -- Users table
 CREATE TABLE IF NOT EXISTS users (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    email VARCHAR(255) NOT NULL UNIQUE,
-    password_hash VARCHAR(255),
-    first_name VARCHAR(100),
-    last_name VARCHAR(100),
-    provider VARCHAR(50),
-    provider_id VARCHAR(255),
+    id BIGSERIAL PRIMARY KEY,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    password VARCHAR(120),
+    name VARCHAR(100),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    last_login TIMESTAMP,
+    active BOOLEAN DEFAULT true,
+    enabled BOOLEAN DEFAULT false
 );
 
 -- User tokens table for password reset and email verification
 CREATE TABLE IF NOT EXISTS user_tokens (
     id UUID PRIMARY KEY,
-    user_id UUID NOT NULL REFERENCES users(id),
+    user_id BIGINT NOT NULL REFERENCES users(id),
     token VARCHAR(255) NOT NULL,
     token_type VARCHAR(50) NOT NULL,
     expires_at TIMESTAMP NOT NULL,
@@ -37,7 +37,7 @@ CREATE TABLE IF NOT EXISTS user_tokens (
 -- User sessions table
 CREATE TABLE IF NOT EXISTS user_sessions (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id UUID NOT NULL REFERENCES users(id),
+    user_id BIGINT NOT NULL REFERENCES users(id),
     refresh_token VARCHAR(255) NOT NULL,
     device_info VARCHAR(255),
     ip_address VARCHAR(50),
@@ -47,7 +47,7 @@ CREATE TABLE IF NOT EXISTS user_sessions (
 
 -- User roles join table
 CREATE TABLE IF NOT EXISTS user_roles (
-    user_id UUID NOT NULL,
+    user_id BIGINT NOT NULL,
     role_id INT NOT NULL,
     PRIMARY KEY (user_id, role_id),
     FOREIGN KEY (user_id) REFERENCES users(id),

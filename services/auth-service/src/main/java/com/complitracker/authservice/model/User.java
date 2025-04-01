@@ -38,15 +38,6 @@ public class User {
     @Size(max = 120)
     private String password;
 
-    @Size(max = 50)
-    private String provider;    // OAuth2 provider (google, microsoft, etc)
-
-    @Size(max = 50)
-    private String providerId;  // OAuth2 provider's user ID
-
-    @Size(max = 50)
-    private String authProvider; // For checking auth method consistency
-
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_roles",
             joinColumns = @JoinColumn(name = "user_id"),

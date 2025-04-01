@@ -21,8 +21,6 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.complitracker.authservice.security.jwt.AuthEntryPointJwt;
 import com.complitracker.authservice.security.jwt.AuthTokenFilter;
-import com.complitracker.authservice.security.oauth2.CustomOAuth2UserService;
-import com.complitracker.authservice.security.oauth2.OAuth2AuthenticationSuccessHandler;
 import com.complitracker.authservice.security.services.UserDetailsServiceImpl;
 
 @Configuration
@@ -34,12 +32,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private AuthEntryPointJwt unauthorizedHandler;
-
-    @Autowired
-    private CustomOAuth2UserService customOAuth2UserService;
-
-    @Autowired
-    private OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
 
     @Autowired
     private AccountLockoutService accountLockoutService;
@@ -85,28 +77,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             .and()
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
             .authorizeRequests()
-            // Explicitly permit these endpoints
             .antMatchers(
-                "/login", 
-                "/register", 
-                "/refreshtoken"
+                "/api/auth/login",
+                "/api/auth/register",
+                "/api/auth/refreshtoken"
             ).permitAll()
-            .antMatchers("/oauth2/**").permitAll()
-            .antMatchers("/h2-console/**").permitAll() // For H2 console access
+            .antMatchers("/h2-console/**").permitAll()
             .anyRequest().authenticated()
             .and()
-            .oauth2Login()
-                .authorizationEndpoint()
-                    .baseUri("/oauth2/authorize")
-                    .and()
-                .redirectionEndpoint()
-                    .baseUri("/oauth2/callback/*")
-                    .and()
-                .userInfoEndpoint()
-                    .oidcUserService(customOAuth2UserService)
-                    .and()
-                .successHandler(oAuth2AuthenticationSuccessHandler)
-            .and()
+            .httpBasic().disable()
             .formLogin().disable();
 
         // For H2 console
