@@ -1,33 +1,33 @@
-import React, { useState, useContext } from 'react';
-import { Form, Button, Alert, Card } from 'react-bootstrap';
-import { Link, useNavigate } from 'react-router-dom';
-import { Formik } from 'formik';
-import * as Yup from 'yup';
-import { AuthContext } from '../context/AuthContext';
+import React, { useState, useContext } from "react";
+import { Form, Button, Alert, Card } from "react-bootstrap";
+import { Link, useNavigate } from "react-router-dom";
+import { Formik } from "formik";
+import * as Yup from "yup";
+import { useAuth } from "../hooks/useAuth";
 
 const Register = () => {
-  const { register } = useContext(AuthContext);
+  const { register } = useAuth();
   const [registerError, setRegisterError] = useState(null);
   const navigate = useNavigate();
 
   // Validation schema
   const validationSchema = Yup.object({
     name: Yup.string()
-      .required('Full name is required')
-      .min(2, 'Name must be at least 2 characters'),
+      .required("Full name is required")
+      .min(2, "Name must be at least 2 characters"),
     email: Yup.string()
-      .email('Invalid email address')
-      .required('Email is required'),
+      .email("Invalid email address")
+      .required("Email is required"),
     password: Yup.string()
-      .required('Password is required')
-      .min(8, 'Password must be at least 8 characters')
+      .required("Password is required")
+      .min(8, "Password must be at least 8 characters")
       .matches(
         /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/,
-        'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character'
+        "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character",
       ),
     confirmPassword: Yup.string()
-      .oneOf([Yup.ref('password'), null], 'Passwords must match')
-      .required('Confirm password is required')
+      .oneOf([Yup.ref("password"), null], "Passwords must match")
+      .required("Confirm password is required"),
   });
 
   // Handle form submission
@@ -38,12 +38,17 @@ const Register = () => {
       const { confirmPassword, ...userData } = values;
       const success = await register(userData);
       if (success) {
-        navigate('/login', { state: { message: 'Registration successful! Please login with your credentials.' } });
+        navigate("/login", {
+          state: {
+            message:
+              "Registration successful! Please login with your credentials.",
+          },
+        });
       } else {
-        setRegisterError('Registration failed. Please try again.');
+        setRegisterError("Registration failed. Please try again.");
       }
     } catch (err) {
-      setRegisterError(err.message || 'An error occurred during registration');
+      setRegisterError(err.message || "An error occurred during registration");
     } finally {
       setSubmitting(false);
     }
@@ -57,17 +62,20 @@ const Register = () => {
           CompliTracker
         </h2>
       </div>
-      
+
       <Card>
         <Card.Body>
           <h3 className="text-center mb-4">Create an Account</h3>
-          
-          {registerError && (
-            <Alert variant="danger">{registerError}</Alert>
-          )}
-          
+
+          {registerError && <Alert variant="danger">{registerError}</Alert>}
+
           <Formik
-            initialValues={{ name: '', email: '', password: '', confirmPassword: '' }}
+            initialValues={{
+              name: "",
+              email: "",
+              password: "",
+              confirmPassword: "",
+            }}
             validationSchema={validationSchema}
             onSubmit={handleSubmit}
           >
@@ -78,7 +86,7 @@ const Register = () => {
               handleChange,
               handleBlur,
               handleSubmit,
-              isSubmitting
+              isSubmitting,
             }) => (
               <Form onSubmit={handleSubmit}>
                 <Form.Group className="mb-3" controlId="name">
@@ -137,7 +145,9 @@ const Register = () => {
                     value={values.confirmPassword}
                     onChange={handleChange}
                     onBlur={handleBlur}
-                    isInvalid={touched.confirmPassword && errors.confirmPassword}
+                    isInvalid={
+                      touched.confirmPassword && errors.confirmPassword
+                    }
                     placeholder="Confirm your password"
                   />
                   <Form.Control.Feedback type="invalid">
@@ -150,12 +160,20 @@ const Register = () => {
                     type="checkbox"
                     label={
                       <span>
-                        I agree to the{' '}
-                        <Link to="/terms" className="text-decoration-none" target="_blank">
+                        I agree to the{" "}
+                        <Link
+                          to="/terms"
+                          className="text-decoration-none"
+                          target="_blank"
+                        >
                           Terms of Service
-                        </Link>{' '}
-                        and{' '}
-                        <Link to="/privacy" className="text-decoration-none" target="_blank">
+                        </Link>{" "}
+                        and{" "}
+                        <Link
+                          to="/privacy"
+                          className="text-decoration-none"
+                          target="_blank"
+                        >
                           Privacy Policy
                         </Link>
                       </span>
@@ -170,15 +188,15 @@ const Register = () => {
                   disabled={isSubmitting}
                   className="w-100 mb-3"
                 >
-                  {isSubmitting ? 'Registering...' : 'Register'}
+                  {isSubmitting ? "Registering..." : "Register"}
                 </Button>
               </Form>
             )}
           </Formik>
-          
+
           <div className="text-center mt-3">
             <p>
-              Already have an account?{' '}
+              Already have an account?{" "}
               <Link to="/login" className="text-decoration-none">
                 Login here
               </Link>

@@ -1,49 +1,37 @@
-import axios from 'axios';
-import authService from './authService';
-
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080/api';
-
-// Create axios instance with auth header
-const axiosInstance = (token) => {
-  return axios.create({
-    baseURL: API_URL,
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`
-    }
-  });
-};
-
 const ssoService = {
-  // Get available SSO providers
+  // Return empty array of providers
   getProviders: async () => {
-    return await axios.get(`${API_URL}/auth/sso/providers`);
+    return { data: [] };
   },
 
-  // Initiate SSO authentication with a provider
+  // Return a placeholder URL
   initiateSSO: async (provider) => {
-    return await axios.get(`${API_URL}/auth/sso/${provider}/authorize`);
+    console.warn("SSO functionality has been removed");
+    return { data: { authUrl: "#" } };
   },
 
-  // Complete SSO authentication (callback handler)
+  // Return mock authentication response
   completeSSO: async (provider, code, state) => {
-    return await axios.post(`${API_URL}/auth/sso/${provider}/callback`, { code, state });
+    console.warn("SSO functionality has been removed");
+    return { data: { message: "SSO functionality has been removed" } };
   },
 
-  // Link SSO provider to existing account
+  // Return success for link operation
   linkProvider: async (token, provider, code) => {
-    return await axiosInstance(token).post(`/auth/sso/${provider}/link`, { code });
+    console.warn("SSO functionality has been removed");
+    return { data: { success: false } };
   },
 
-  // Unlink SSO provider from account
+  // Return success for unlink operation
   unlinkProvider: async (token, provider) => {
-    return await axiosInstance(token).delete(`/auth/sso/${provider}/link`);
+    console.warn("SSO functionality has been removed");
+    return { data: { success: false } };
   },
 
-  // Get linked providers for current user
+  // Return empty array of linked providers
   getLinkedProviders: async (token) => {
-    return await axiosInstance(token).get('/auth/sso/linked');
-  }
+    return { data: [] };
+  },
 };
 
 export default ssoService;

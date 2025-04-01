@@ -2,7 +2,6 @@ import React, { createContext, useState, useEffect } from "react";
 import jwt_decode from "jwt-decode";
 import { useNavigate } from "react-router-dom";
 import authService from "../services/authService";
-import ssoService from "../services/ssoService";
 
 export const AuthContext = createContext();
 
@@ -11,7 +10,6 @@ export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(localStorage.getItem("token"));
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [connectedProviders, setConnectedProviders] = useState([]);
 
   const navigate = useNavigate();
 
@@ -68,10 +66,31 @@ export const AuthProvider = ({ children }) => {
       setLoading(true);
       setError(null);
       const response = await authService.register(userData);
-      navigate("/login");
-      return true;
+      console.log("Registration response:", response);
+
+      // Check if the response indicates success even if status code is not 200
+      const isSuccess =
+        response.status === 200 ||
+        response.status === 201 ||
+        (response.data && response.data.success);
+
+      if (isSuccess) {
+        navigate("/login", {
+          state: {
+            message:
+              "Registration successful! Please login with your credentials.",
+          },
+        });
+        return true;
+      } else {
+        setError("Registration failed. Please try again.");
+        return false;
+      }
     } catch (err) {
-      setError(err.response?.data?.message || "Registration failed");
+      console.error("Registration error details:", err);
+      setError(
+        err.response?.data?.message || "Registration failed. Please try again.",
+      );
       return false;
     } finally {
       setLoading(false);
@@ -85,135 +104,14 @@ export const AuthProvider = ({ children }) => {
     navigate("/login");
   };
 
-  // Initiate SSO authentication
-  const initiateSSO = async (provider, redirectUri = "/dashboard") => {
-    try {
-      setLoading(true);
-      setError(null);
-
-      // Create state with redirect URI
-      const state = btoa(
-        JSON.stringify({
-          provider,
-          redirectUri,
-        }),
-      );
-
-      // Get authorization URL
-      const response = await ssoService.initiateSSO(provider);
-
-      // Redirect to provider's authorization page
-      window.location.href = response.data.authorizationUrl;
-      return true;
-    } catch (err) {
-      setError(
-        err.response?.data?.message || `Failed to initiate ${provider} login`,
-      );
-      setLoading(false);
-      return false;
-    }
-  };
-
-  // Handle SSO callback
-  const handleSSOCallback = async (provider, code, state) => {
-    try {
-      setLoading(true);
-      setError(null);
-
-      // Complete SSO authentication
-      const response = await ssoService.completeSSO(provider, code, state);
-      const { token, user } = response.data;
-
-      localStorage.setItem("token", token);
-      setToken(token);
-      setCurrentUser(user);
-
-      // Get connected providers
-      fetchConnectedProviders(token);
-
-      return true;
-    } catch (err) {
-      setError(err.response?.data?.message || "SSO authentication failed");
-      return false;
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Fetch connected SSO providers
-  const fetchConnectedProviders = async (authToken) => {
-    try {
-      const response = await ssoService.getLinkedProviders(authToken || token);
-      setConnectedProviders(response.data);
-    } catch (err) {
-      console.error("Error fetching connected providers:", err);
-    }
-  };
-
-  // Link SSO provider to existing account
-  const linkSSOProvider = async (provider, code) => {
-    try {
-      setLoading(true);
-      setError(null);
-
-      await ssoService.linkProvider(token, provider, code);
-
-      // Refresh connected providers
-      await fetchConnectedProviders();
-
-      return true;
-    } catch (err) {
-      setError(
-        err.response?.data?.message || `Failed to link ${provider} account`,
-      );
-      return false;
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Unlink SSO provider from account
-  const unlinkSSOProvider = async (provider) => {
-    try {
-      setLoading(true);
-      setError(null);
-
-      await ssoService.unlinkProvider(token, provider);
-
-      // Refresh connected providers
-      await fetchConnectedProviders();
-
-      return true;
-    } catch (err) {
-      setError(
-        err.response?.data?.message || `Failed to unlink ${provider} account`,
-      );
-      return false;
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Fetch connected providers on mount if user is logged in
-  useEffect(() => {
-    if (token && currentUser) {
-      fetchConnectedProviders();
-    }
-  }, [currentUser]);
-
   const value = {
     currentUser,
     token,
     loading,
     error,
-    connectedProviders,
     login,
     register,
     logout,
-    initiateSSO,
-    handleSSOCallback,
-    linkSSOProvider,
-    unlinkSSOProvider,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

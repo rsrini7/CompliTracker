@@ -1,6 +1,18 @@
-import axios from 'axios';
+import axios from "axios";
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080/api';
+// Response interceptor
+axios.interceptors.response.use(
+  (response) => {
+    console.log(`API Response [${response.config.url}]:`, response);
+    return response;
+  },
+  (error) => {
+    console.error(`API Error [${error.config?.url}]:`, error.response || error);
+    return Promise.reject(error);
+  },
+);
+
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8080/api";
 
 const authService = {
   // Login user and get token
@@ -10,15 +22,22 @@ const authService = {
 
   // Register new user
   register: async (userData) => {
-    return await axios.post(`${API_URL}/auth/register`, userData);
+    try {
+      const response = await axios.post(`${API_URL}/auth/register`, userData);
+      console.log("Registration successful:", response);
+      return response;
+    } catch (err) {
+      console.error("Registration error:", err.response || err);
+      throw err;
+    }
   },
 
   // Get current user information
   getCurrentUser: async (token) => {
     return await axios.get(`${API_URL}/auth/me`, {
       headers: {
-        Authorization: `Bearer ${token}`
-      }
+        Authorization: `Bearer ${token}`,
+      },
     });
   },
 
@@ -41,9 +60,9 @@ const authService = {
   resetPassword: async (token, newPassword) => {
     return await axios.post(`${API_URL}/auth/reset-password`, {
       token,
-      newPassword
+      newPassword,
     });
-  }
+  },
 };
 
 export default authService;
