@@ -16,6 +16,7 @@ const Dashboard = () => {
   const [notifications, setNotifications] = useState([]);
 
   useEffect(() => {
+    console.log('Dashboard useEffect running. Token:', token);
     const fetchDashboardData = async () => {
       try {
         setLoading(true);
@@ -45,7 +46,10 @@ const Dashboard = () => {
     };
 
     if (token) {
+      console.log('Token exists, calling fetchDashboardData...');
       fetchDashboardData();
+    } else {
+      console.log('Token does NOT exist, not fetching data.');
     }
   }, [token]);
 

@@ -21,7 +21,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
 
   return (
     <div
-      className={`sidebar bg-light ${isOpen ? "sidebar-open" : "sidebar-closed"}`}
+      className={`sidebar ${isOpen ? "sidebar-open" : "sidebar-closed"}`}
     >
       <div className="d-lg-none p-3 text-end">
         <button
@@ -46,7 +46,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
             Dashboard
           </Nav.Link>
 
-          <h6 className="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-2 text-muted">
+          <h6 className="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-2 text-body-secondary">
             <span>Compliance</span>
           </h6>
           <Nav.Link
@@ -72,7 +72,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
             Add New Item
           </Nav.Link>
 
-          <h6 className="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-2 text-muted">
+          <h6 className="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-2 text-body-secondary">
             <span>Documents</span>
           </h6>
           <Nav.Link
@@ -98,7 +98,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
             Upload New
           </Nav.Link>
 
-          <h6 className="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-2 text-muted">
+          <h6 className="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-2 text-body-secondary">
             <span>Risk Analysis</span>
           </h6>
           <Nav.Link
@@ -110,7 +110,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
             Risk Dashboard
           </Nav.Link>
 
-          <h6 className="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-2 text-muted">
+          <h6 className="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-2 text-body-secondary">
             <span>Settings</span>
           </h6>
           <Nav.Link

@@ -3,16 +3,16 @@ import axios from "axios";
 // axios.defaults.baseURL = `http://localhost:5173`
 
 // Response interceptor
-axios.interceptors.response.use(
-  (response) => {
-    console.log(`API Response [${response.config.url}]:`, response);
-    return response;
-  },
-  (error) => {
-    console.error(`API Error [${error.config?.url}]:`, error.response || error);
-    return Promise.reject(error);
-  },
-);
+// axios.interceptors.response.use(
+//   (response) => {
+//     console.log(`API Response [${response.config.url}]:`, response);
+//     return response;
+//   },
+//   (error) => {
+//     console.error(`API Error [${error.config?.url}]:`, error.response || error);
+//     return Promise.reject(error);
+//   },
+// );
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8080/api";
 

@@ -6,8 +6,9 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: #f5f7fa;
-  color: #333;
+  /* Remove hardcoded colors - let Bootstrap variables handle this */
+  /* background-color: #f5f7fa; */
+  /* color: #333; */
 }
 
 code {
@@ -20,37 +21,38 @@ h1, h2, h3, h4, h5, h6 {
   margin-bottom: 1rem;
   font-weight: 600;
   line-height: 1.2;
-  color: #212529;
+  /* Remove hardcoded color */
+  /* color: #212529; */
 }
 
-/* Utility Classes */
-.text-primary { color: #007bff !important; }
-.text-secondary { color: #6c757d !important; }
-.text-success { color: #28a745 !important; }
-.text-danger { color: #dc3545 !important; }
-.text-warning { color: #ffc107 !important; }
-.text-info { color: #17a2b8 !important; }
+/* Utility Classes - Remove !important to allow theme overrides */
+.text-primary { color: #007bff; }
+.text-secondary { color: #6c757d; }
+.text-success { color: #28a745; }
+.text-danger { color: #dc3545; }
+.text-warning { color: #ffc107; }
+.text-info { color: #17a2b8; }
 
-.bg-light { background-color: #f8f9fa !important; }
-.bg-dark { background-color: #343a40 !important; }
+.bg-light { background-color: #f8f9fa; }
+.bg-dark { background-color: #343a40; }
 
-/* Custom Scrollbar */
+/* Custom Scrollbar - Use CSS variables for theming */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f1f1;
+  background: var(--bs-tertiary-bg, #f1f1f1); /* Use BS variable with fallback */
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #888;
+  background: var(--bs-secondary, #888); /* Use BS variable with fallback */
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #555;
+  background: var(--bs-secondary-hover, #555); /* Needs a hover variable or darker color */
 }
 
 /* Responsive Adjustments */
