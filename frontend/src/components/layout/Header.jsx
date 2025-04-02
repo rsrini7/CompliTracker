@@ -1,6 +1,6 @@
 import React from "react";
 import { Navbar, Nav, Container, NavDropdown, Button } from "react-bootstrap";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
 import { useTheme } from "../../context/ThemeContext";
 
@@ -8,6 +8,11 @@ const Header = ({ toggleSidebar }) => {
   const { currentUser, logout } = useAuth();
   const { darkMode, toggleDarkMode } = useTheme();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const isActive = (path) => {
+    return location.pathname.startsWith(path);
+  };
 
   const handleLogout = () => {
     logout();
@@ -37,16 +42,32 @@ const Header = ({ toggleSidebar }) => {
           <Nav className="me-auto">
             {currentUser && (
               <>
-                <Nav.Link as={Link} to="/dashboard">
+                <Nav.Link 
+                  as={Link} 
+                  to="/dashboard" 
+                  className={isActive('/dashboard') ? 'active fw-bold' : ''}
+                >
                   <i className="bi bi-speedometer2 me-1"></i> Dashboard
                 </Nav.Link>
-                <Nav.Link as={Link} to="/compliance">
+                <Nav.Link 
+                  as={Link} 
+                  to="/compliance" 
+                  className={isActive('/compliance') ? 'active fw-bold' : ''}
+                >
                   <i className="bi bi-check2-square me-1"></i> Compliance
                 </Nav.Link>
-                <Nav.Link as={Link} to="/documents">
+                <Nav.Link 
+                  as={Link} 
+                  to="/documents" 
+                  className={isActive('/documents') ? 'active fw-bold' : ''}
+                >
                   <i className="bi bi-file-earmark-text me-1"></i> Documents
                 </Nav.Link>
-                <Nav.Link as={Link} to="/risk-analysis">
+                <Nav.Link 
+                  as={Link} 
+                  to="/risk-analysis" 
+                  className={isActive('/risk-analysis') ? 'active fw-bold' : ''}
+                >
                   <i className="bi bi-graph-up me-1"></i> Risk Analysis
                 </Nav.Link>
               </>

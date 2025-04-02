@@ -40,7 +40,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
           <Nav.Link
             as={Link}
             to="/dashboard"
-            className={isActive("/dashboard") ? "active" : ""}
+            className={isActive("/dashboard") ? "active fw-bold" : ""}
           >
             <i className="bi bi-speedometer2 me-2"></i>
             Dashboard
@@ -54,7 +54,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
             to="/compliance"
             className={
               isActive("/compliance") && !location.pathname.includes("/create")
-                ? "active"
+                ? "active fw-bold"
                 : ""
             }
           >
@@ -65,7 +65,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
             as={Link}
             to="/compliance/create"
             className={
-              location.pathname === "/compliance/create" ? "active" : ""
+              location.pathname === "/compliance/create" ? "active fw-bold" : ""
             }
           >
             <i className="bi bi-plus-circle me-2"></i>
@@ -80,7 +80,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
             to="/documents"
             className={
               isActive("/documents") && !location.pathname.includes("/upload")
-                ? "active"
+                ? "active fw-bold"
                 : ""
             }
           >
@@ -91,7 +91,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
             as={Link}
             to="/documents/upload"
             className={
-              location.pathname === "/documents/upload" ? "active" : ""
+              location.pathname === "/documents/upload" ? "active fw-bold" : ""
             }
           >
             <i className="bi bi-cloud-upload me-2"></i>
@@ -104,7 +104,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
           <Nav.Link
             as={Link}
             to="/risk-analysis"
-            className={location.pathname === "/risk-analysis" ? "active" : ""}
+            className={location.pathname === "/risk-analysis" ? "active fw-bold" : ""}
           >
             <i className="bi bi-graph-up me-2"></i>
             Risk Dashboard
@@ -116,7 +116,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
           <Nav.Link
             as={Link}
             to="/profile"
-            className={location.pathname === "/profile" ? "active" : ""}
+            className={location.pathname === "/profile" ? "active fw-bold" : ""}
           >
             <i className="bi bi-person me-2"></i>
             Profile
@@ -126,7 +126,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
             to="/profile/notification-channels"
             className={
               location.pathname === "/profile/notification-channels"
-                ? "active"
+                ? "active fw-bold"
                 : ""
             }
           >
@@ -138,7 +138,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
             to="/profile/calendar-integration"
             className={
               location.pathname === "/profile/calendar-integration"
-                ? "active"
+                ? "active fw-bold"
                 : ""
             }
           >
@@ -150,7 +150,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
             to="/profile/signature-integration"
             className={
               location.pathname === "/profile/signature-integration"
-                ? "active"
+                ? "active fw-bold"
                 : ""
             }
           >
