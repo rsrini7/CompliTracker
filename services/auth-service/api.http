@@ -1,8 +1,11 @@
 ### Auth Service API Tests
 
 @baseUrl = http://localhost:8081/api/auth
+@baseUserUrl = http://localhost:8081/api/users
 
 @authToken = {{login.response.body.token}}
+
+@userId = 1
 
 ### Register a new user
 POST {{baseUrl}}/register
@@ -41,17 +44,15 @@ Content-Type: application/json
 }
 
 ### Get Current User Profile
-GET {{baseUrl}}/api/users/me
+GET {{baseUserUrl}}/me
 Authorization: Bearer {{authToken}}
 
-@userId = 1
-
 ### Get User by ID (Admin Only)
-GET {{baseUrl}}/api/users/{{userId}}
+GET {{baseUserUrl}}/{{userId}}
 Authorization: Bearer {{authToken}}
 
 ### Update Current User Profile
-PUT {{baseUrl}}/api/users/me
+PUT {{baseUserUrl}}/me
 Authorization: Bearer {{authToken}}
 Content-Type: application/json
 

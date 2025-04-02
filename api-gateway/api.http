@@ -3,6 +3,9 @@
 @authToken = {{login.response.body.token}}
 @baseDocumentUrl = http://localhost:8080/api/documents
 @baseAuthUrl = http://localhost:8080/api/auth
+
+@baseUsersUrl = http://localhost:8080/api/users
+
 @documentId = 3
 @userId = user@example.com
 
@@ -47,15 +50,15 @@ Content-Type: application/json
 ### User Management
 
 ### Get Current User
-GET {{baseAuthUrl}}/me
+GET {{baseUsersUrl}}/me
 Authorization: Bearer {{authToken}}
 
 ### Get User by ID (Admin only)
-GET {{baseAuthUrl}}/{{userId}}
+GET {{baseUsersUrl}}/{{userId}}
 Authorization: Bearer {{authToken}}
 
 ### Update Current User
-PUT {{baseAuthUrl}}/me
+PUT {{baseUsersUrl}}/me
 Content-Type: application/json
 Authorization: Bearer {{authToken}}
 

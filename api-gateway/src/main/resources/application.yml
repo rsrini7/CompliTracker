@@ -1,7 +1,13 @@
 server:
   port: 8080
+  max-http-header-size: 16384
+  netty:
+    max-initial-line-length: 16384
+    max-chunk-size: 16384
 
 spring:
+  codec:
+    max-in-memory-size: 16MB
   application:
     name: api-gateway
   main:
@@ -9,6 +15,9 @@ spring:
 
   cloud:
     gateway:
+      httpclient:
+        response-timeout: 30000
+        connect-timeout: 30000
       discovery:
         locator:
           enabled: true
@@ -19,6 +28,13 @@ spring:
           predicates:
             - Path=/api/auth/**
           filters: []
+
+        - id: auth-users-service
+          uri: http://localhost:8081
+          predicates:
+            - Path=/api/users/**
+          filters: 
+            - name: JwtTokenFilter
 
         - id: document-service
           uri: lb://document-service
@@ -74,8 +90,8 @@ management:
 
 jwt:
   secret: complitracker_jwt_secret_key_should_be_very_long_and_secure_in_production
-  expiration: 86400000  # 24 hours in milliseconds
-  refresh-expiration: 604800000  # 7 days in milliseconds
+  expiration: 86400000 # 24 hours in milliseconds
+  refresh-expiration: 604800000 # 7 days in milliseconds
 
 resilience4j:
   circuitbreaker:

@@ -1,5 +1,7 @@
 import axios from "axios";
 
+axios.defaults.baseURL = `http://localhost:5173`
+
 // Response interceptor
 axios.interceptors.response.use(
   (response) => {
@@ -34,7 +36,7 @@ const authService = {
 
   // Get current user information
   getCurrentUser: async (token) => {
-    return await axios.get(`${API_URL}/auth/me`, {
+    return await axios.get(`${API_URL}/users/me`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },

@@ -1,7 +1,10 @@
 server:
   port: 8081
+  max-http-header-size: 16384
 
 spring:
+  codec:
+    max-in-memory-size: 16MB
   application:
     name: auth-service
   datasource:
@@ -30,7 +33,6 @@ spring:
         - ERROR
         - INCLUDE
 
-
 eureka:
   client:
     service-url:
@@ -42,5 +44,5 @@ eureka:
 
 jwt:
   secret: complitracker_jwt_secret_key_should_be_very_long_and_secure_in_production
-  expiration: 86400000  # 24 hours in milliseconds
-  refresh-expiration: 604800000  # 7 days in milliseconds
+  expiration: 86400000 # 24 hours in milliseconds
+  refresh-expiration: 604800000 # 7 days in milliseconds
