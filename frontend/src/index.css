@@ -38,21 +38,21 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Custom Scrollbar - Use CSS variables for theming */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--bs-tertiary-bg, #f1f1f1); /* Use BS variable with fallback */
+  background: var(--bs-tertiary-bg);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--bs-secondary, #888); /* Use BS variable with fallback */
-  border-radius: 4px;
+  background: var(--bs-secondary);
+  border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--bs-secondary-hover, #555); /* Needs a hover variable or darker color */
+  background: var(--bs-secondary-emphasis);
 }
 
 /* Responsive Adjustments */
