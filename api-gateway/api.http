@@ -7,7 +7,7 @@
 @baseUsersUrl = http://localhost:8080/api/users
 
 @documentId = 3
-@userId = user@example.com
+@userId = 1
 
 @tempToken = eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhYmNAYWJjIiwicm9sZXMiOlsiUk9MRV9VU0VSIl0sImlhdCI6MTc0MzU4MjI0NiwiZXhwIjoxNzQzNjY4NjQ2fQ.kWVCsfA9gD7lB5MZ1cQ4LnLdf44smOn7FCuv40FHIgk33FLPYgcnNGfUDAwCTS5Xt9-6zI2fWk7uZC0zM4y5vA
 

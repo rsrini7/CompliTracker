@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
 @Component
@@ -18,7 +19,7 @@ public class JwtUtils {
     private String jwtSecret;
 
     private byte[] getSigningKey() {
-        return java.util.Base64.getEncoder().encode(jwtSecret.getBytes());
+        return jwtSecret.getBytes(StandardCharsets.UTF_8);
     }
 
     @Value("${jwt.expiration}")

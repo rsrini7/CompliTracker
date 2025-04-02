@@ -16,6 +16,9 @@ import reactor.core.publisher.Mono;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public class JwtAuthenticationFilter implements WebFilter {
 
     private final JwtConfig jwtConfig;
@@ -48,18 +51,21 @@ public class JwtAuthenticationFilter implements WebFilter {
     private boolean validateToken(String token) {
         try {
             Jwts.parserBuilder()
-                .setSigningKey(jwtConfig.getSecret())
+                .setSigningKey(jwtConfig.getSecretKey())
                 .build()
                 .parseClaimsJws(token);
+            log.debug("JWT token validation successful.");
             return true;
         } catch (Exception e) {
+            log.error("JWT token validation failed: {}", e.getMessage());
+            log.trace("JWT validation exception details:", e);
             return false;
         }
     }
 
     private Authentication getAuthentication(String token) {
         Claims claims = Jwts.parserBuilder()
-                .setSigningKey(jwtConfig.getSecret())
+                .setSigningKey(jwtConfig.getSecretKey())
                 .build()
                 .parseClaimsJws(token)
                 .getBody();

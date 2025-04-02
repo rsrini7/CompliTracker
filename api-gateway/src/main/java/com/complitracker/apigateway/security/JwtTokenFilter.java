@@ -12,6 +12,10 @@ import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
+import io.jsonwebtoken.SignatureException;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.UnsupportedJwtException;
 
 @Component
 @Slf4j
@@ -23,6 +27,11 @@ public class JwtTokenFilter
 
     public JwtTokenFilter() {
         super(Config.class);
+    }
+
+    private byte[] getSigningKey() {
+        // This is the original, incorrect version that Base64 encodes the key
+        return java.util.Base64.getEncoder().encode(jwtSecret.getBytes());
     }
 
     @Override
@@ -68,10 +77,13 @@ public class JwtTokenFilter
             }
 
             try {
-                // Verify the token is valid
-                Claims claims = Jwts.parserBuilder()
-                    .setSigningKey(Keys.hmacShaKeyFor(jwtSecret.getBytes()))
-                    .build()
+                log.info("Attempting to validate token: {}", token);
+                byte[] signingKey = getSigningKey();
+                log.info("Using signing key (length): {}", signingKey.length);
+                log.info("Validating JWT token...");
+                // Verify the token is valid using the same method as auth service
+                Claims claims = Jwts.parser()
+                    .setSigningKey(getSigningKey())
                     .parseClaimsJws(token)
                     .getBody();
 
@@ -91,13 +103,24 @@ public class JwtTokenFilter
                 return chain.filter(
                     exchange.mutate().request(modifiedRequest).build()
                 );
+            } catch (SignatureException e) {
+                log.error("Invalid JWT signature for token: {}. Error: {}", token, e.getMessage(), e);
+                return onError(exchange, "Invalid JWT signature", HttpStatus.UNAUTHORIZED);
+            } catch (MalformedJwtException e) {
+                log.error("Invalid JWT token format: {}. Error: {}", token, e.getMessage(), e);
+                return onError(exchange, "Invalid JWT token", HttpStatus.UNAUTHORIZED);
+            } catch (ExpiredJwtException e) {
+                log.error("JWT token is expired: {}. Error: {}", token, e.getMessage(), e);
+                return onError(exchange, "JWT token is expired", HttpStatus.UNAUTHORIZED);
+            } catch (UnsupportedJwtException e) {
+                log.error("JWT token is unsupported: {}. Error: {}", token, e.getMessage(), e);
+                return onError(exchange, "JWT token is unsupported", HttpStatus.UNAUTHORIZED);
+            } catch (IllegalArgumentException e) {
+                log.error("JWT claims string is empty for token: {}. Error: {}", token, e.getMessage(), e);
+                return onError(exchange, "JWT claims string is empty", HttpStatus.UNAUTHORIZED);
             } catch (Exception e) {
-                log.error("Invalid token: {}", e.getMessage());
-                return onError(
-                    exchange,
-                    "Invalid token: " + e.getMessage(),
-                    HttpStatus.UNAUTHORIZED
-                );
+                log.error("General error validating token: {}. Error: {}", token, e.getMessage(), e);
+                return onError(exchange, "Invalid token: " + e.getMessage(), HttpStatus.UNAUTHORIZED);
             }
         };
     }

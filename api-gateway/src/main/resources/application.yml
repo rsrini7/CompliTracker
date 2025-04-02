@@ -33,8 +33,7 @@ spring:
           uri: lb://auth-service
           predicates:
             - Path=/api/users/**
-          filters:
-            - name: JwtTokenFilter
+          filters: []
 
         - id: document-service
           uri: lb://document-service
@@ -114,3 +113,10 @@ resilience4j:
         baseConfig: default
       coreCircuitBreaker:
         baseConfig: default
+
+logging:
+  level:
+    com.complitracker.apigateway.security.JwtTokenFilter: DEBUG
+    org.springframework.cloud.gateway: TRACE # Add trace for gateway routing itself
+    org.springframework.security: TRACE # Add trace for security components
+    reactor.netty: TRACE # Add trace for underlying netty server
