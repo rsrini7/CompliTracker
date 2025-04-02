@@ -57,179 +57,176 @@ function App() {
           <div className="content-container">
             <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
             <Notifications />
-            <div className="content-container">
-              <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
-              <main className="main-content">
-                <Routes>
-                  {/* Public routes */}
-                  <Route path="/login" element={<Login />} />
-                  <Route path="/register" element={<Register />} />
-                  <Route path="/forgot-password" element={<ForgotPassword />} />
-                  <Route path="/reset-password" element={<ResetPassword />} />
-                  <Route path="/sso/callback" element={<SSOCallback />} />
-                  <Route
-                    path="/profile"
-                    element={
-                      <PrivateRoute>
-                        <Profile />
-                      </PrivateRoute>
-                    }
-                  />
+            <main className="main-content">
+              <Routes>
+                {/* Public routes */}
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
+                <Route path="/forgot-password" element={<ForgotPassword />} />
+                <Route path="/reset-password" element={<ResetPassword />} />
+                <Route path="/sso/callback" element={<SSOCallback />} />
+                <Route
+                  path="/profile"
+                  element={
+                    <PrivateRoute>
+                      <Profile />
+                    </PrivateRoute>
+                  }
+                />
 
-                  {/* Protected routes */}
-                  <Route
-                    path="/"
-                    element={
-                      <PrivateRoute>
-                        <Dashboard />
-                      </PrivateRoute>
-                    }
-                  />
+                {/* Protected routes */}
+                <Route
+                  path="/"
+                  element={
+                    <PrivateRoute>
+                      <Dashboard />
+                    </PrivateRoute>
+                  }
+                />
 
-                  <Route
-                    path="/dashboard"
-                    element={
-                      <PrivateRoute>
-                        <Dashboard />
-                      </PrivateRoute>
-                    }
-                  />
+                <Route
+                  path="/dashboard"
+                  element={
+                    <PrivateRoute>
+                      <Dashboard />
+                    </PrivateRoute>
+                  }
+                />
 
-                  {/* Compliance routes */}
-                  <Route
-                    path="/compliance"
-                    element={
-                      <PrivateRoute>
-                        <ComplianceList />
-                      </PrivateRoute>
-                    }
-                  />
+                {/* Compliance routes */}
+                <Route
+                  path="/compliance"
+                  element={
+                    <PrivateRoute>
+                      <ComplianceList />
+                    </PrivateRoute>
+                  }
+                />
 
-                  <Route
-                    path="/compliance/create"
-                    element={
-                      <PrivateRoute>
-                        <ComplianceForm />
-                      </PrivateRoute>
-                    }
-                  />
+                <Route
+                  path="/compliance/create"
+                  element={
+                    <PrivateRoute>
+                      <ComplianceForm />
+                    </PrivateRoute>
+                  }
+                />
 
-                  <Route
-                    path="/compliance/:id"
-                    element={
-                      <PrivateRoute>
-                        <ComplianceDetail />
-                      </PrivateRoute>
-                    }
-                  />
+                <Route
+                  path="/compliance/:id"
+                  element={
+                    <PrivateRoute>
+                      <ComplianceDetail />
+                    </PrivateRoute>
+                  }
+                />
 
-                  <Route
-                    path="/compliance/:id/edit"
-                    element={
-                      <PrivateRoute>
-                        <ComplianceForm />
-                      </PrivateRoute>
-                    }
-                  />
+                <Route
+                  path="/compliance/:id/edit"
+                  element={
+                    <PrivateRoute>
+                      <ComplianceForm />
+                    </PrivateRoute>
+                  }
+                />
 
-                  {/* Document routes */}
-                  <Route
-                    path="/documents"
-                    element={
-                      <PrivateRoute>
-                        <DocumentList />
-                      </PrivateRoute>
-                    }
-                  />
+                {/* Document routes */}
+                <Route
+                  path="/documents"
+                  element={
+                    <PrivateRoute>
+                      <DocumentList />
+                    </PrivateRoute>
+                  }
+                />
 
-                  <Route
-                    path="/documents/upload"
-                    element={
-                      <PrivateRoute>
-                        <DocumentUpload />
-                      </PrivateRoute>
-                    }
-                  />
+                <Route
+                  path="/documents/upload"
+                  element={
+                    <PrivateRoute>
+                      <DocumentUpload />
+                    </PrivateRoute>
+                  }
+                />
 
-                  <Route
-                    path="/documents/:id"
-                    element={
-                      <PrivateRoute>
-                        <DocumentDetail />
-                      </PrivateRoute>
-                    }
-                  />
+                <Route
+                  path="/documents/:id"
+                  element={
+                    <PrivateRoute>
+                      <DocumentDetail />
+                    </PrivateRoute>
+                  }
+                />
 
-                  <Route
-                    path="/documents/:id/sign"
-                    element={
-                      <PrivateRoute>
-                        <DocumentSign />
-                      </PrivateRoute>
-                    }
-                  />
+                <Route
+                  path="/documents/:id/sign"
+                  element={
+                    <PrivateRoute>
+                      <DocumentSign />
+                    </PrivateRoute>
+                  }
+                />
 
-                  {/* Risk analysis routes */}
-                  <Route
-                    path="/risk-analysis"
-                    element={
-                      <PrivateRoute>
-                        <RiskAnalysisDashboard />
-                      </PrivateRoute>
-                    }
-                  />
+                {/* Risk analysis routes */}
+                <Route
+                  path="/risk-analysis"
+                  element={
+                    <PrivateRoute>
+                      <RiskAnalysisDashboard />
+                    </PrivateRoute>
+                  }
+                />
 
-                  <Route
-                    path="/risk-analysis/compliance/:id"
-                    element={
-                      <PrivateRoute>
-                        <ComplianceRiskAnalysis />
-                      </PrivateRoute>
-                    }
-                  />
+                <Route
+                  path="/risk-analysis/compliance/:id"
+                  element={
+                    <PrivateRoute>
+                      <ComplianceRiskAnalysis />
+                    </PrivateRoute>
+                  }
+                />
 
-                  {/* Profile routes */}
-                  <Route
-                    path="/profile"
-                    element={
-                      <PrivateRoute>
-                        <ProfileSettings />
-                      </PrivateRoute>
-                    }
-                  />
+                {/* Profile routes */}
+                <Route
+                  path="/profile"
+                  element={
+                    <PrivateRoute>
+                      <ProfileSettings />
+                    </PrivateRoute>
+                  }
+                />
 
-                  <Route
-                    path="/profile/calendar-integration"
-                    element={
-                      <PrivateRoute>
-                        <CalendarIntegration />
-                      </PrivateRoute>
-                    }
-                  />
+                <Route
+                  path="/profile/calendar-integration"
+                  element={
+                    <PrivateRoute>
+                      <CalendarIntegration />
+                    </PrivateRoute>
+                  }
+                />
 
-                  <Route
-                    path="/profile/notification-channels"
-                    element={
-                      <PrivateRoute>
-                        <NotificationChannels />
-                      </PrivateRoute>
-                    }
-                  />
+                <Route
+                  path="/profile/notification-channels"
+                  element={
+                    <PrivateRoute>
+                      <NotificationChannels />
+                    </PrivateRoute>
+                  }
+                />
 
-                  <Route
-                    path="/profile/signature-integration"
-                    element={
-                      <PrivateRoute>
-                        <SignatureIntegration />
-                      </PrivateRoute>
-                    }
-                  />
+                <Route
+                  path="/profile/signature-integration"
+                  element={
+                    <PrivateRoute>
+                      <SignatureIntegration />
+                    </PrivateRoute>
+                  }
+                />
 
-                  {/* 404 route */}
-                  <Route path="*" element={<NotFound />} />
-                </Routes>
-              </main>
-            </div>
+                {/* 404 route */}
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </main>
           </div>
 
           <Footer />

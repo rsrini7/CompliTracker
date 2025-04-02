@@ -3,7 +3,7 @@ import { Navigate } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
 
 const PrivateRoute = ({ children }) => {
-  const { currentUser, loading } = useAuth();
+  const { currentUser, token, loading } = useAuth();
 
   // Show loading indicator while checking authentication
   if (loading) {
@@ -20,7 +20,7 @@ const PrivateRoute = ({ children }) => {
   }
 
   // Redirect to login if not authenticated
-  if (!currentUser) {
+  if (!token) {
     return <Navigate to="/login" />;
   }
 
