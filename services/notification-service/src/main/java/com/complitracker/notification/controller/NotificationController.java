@@ -5,31 +5,33 @@ import com.complitracker.notification.model.Notification;
 import com.complitracker.notification.model.NotificationPreference;
 import com.complitracker.notification.service.*;
 import jakarta.validation.Valid;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/notifications")
 @RequiredArgsConstructor
 @Validated
 public class NotificationController {
+
     @Autowired(required = false)
     private EmailService emailService;
+
     @Autowired(required = false)
     private SMSService smsService;
 
     private final NotificationService notificationService;
     private final WhatsAppService whatsAppService;
     private final PushNotificationService pushService;
-    
+
     @PostMapping
-    public ResponseEntity<Void> sendNotification(@Valid @RequestBody NotificationDTO.NotificationRequest request) {
+    public ResponseEntity<Void> sendNotification(
+        @Valid @RequestBody NotificationDTO.NotificationRequest request
+    ) {
         notificationService.sendNotification(
             request.getUserId(),
             request.getTitle(),
@@ -39,29 +41,61 @@ public class NotificationController {
         return ResponseEntity.ok().build();
     }
 
+    @GetMapping
+    public ResponseEntity<List<Notification>> getNotifications(
+        @RequestHeader("X-User-Id") String userId,
+        @RequestParam(defaultValue = "false") boolean unreadOnly,
+        @RequestParam(defaultValue = "5") int limit
+    ) {
+        List<Notification> notifications =
+            notificationService.getUserNotifications(userId, unreadOnly);
+        if (limit > 0 && notifications.size() > limit) {
+            notifications = notifications.subList(0, limit);
+        }
+        return ResponseEntity.ok(notifications);
+    }
+
+    @PutMapping("/read-all")
+    public ResponseEntity<Void> markAllAsRead(
+        @RequestHeader("X-User-Id") String userId
+    ) {
+        notificationService.markAllAsRead(userId);
+        return ResponseEntity.ok().build();
+    }
+
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<Notification>> getUserNotifications(
         @PathVariable String userId,
         @RequestParam(defaultValue = "false") boolean unreadOnly
     ) {
-        return ResponseEntity.ok(notificationService.getUserNotifications(userId, unreadOnly));
+        return ResponseEntity.ok(
+            notificationService.getUserNotifications(userId, unreadOnly)
+        );
     }
 
     @PutMapping("/{notificationId}/read")
-    public ResponseEntity<Void> markAsRead(@PathVariable String notificationId) {
+    public ResponseEntity<Void> markAsRead(
+        @PathVariable String notificationId
+    ) {
         notificationService.markNotificationAsRead(notificationId);
         return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{notificationId}")
-    public ResponseEntity<Void> deleteNotification(@PathVariable String notificationId) {
+    public ResponseEntity<Void> deleteNotification(
+        @PathVariable String notificationId
+    ) {
         notificationService.deleteNotification(notificationId);
         return ResponseEntity.ok().build();
     }
 
     @GetMapping("/preferences/{userId}")
-    public ResponseEntity<NotificationPreference> getUserPreferences(@PathVariable String userId) {
-        return ResponseEntity.ok(notificationService.getUserPreferences(userId));
+    public ResponseEntity<NotificationPreference> getUserPreferences(
+        @PathVariable String userId
+    ) {
+        return ResponseEntity.ok(
+            notificationService.getUserPreferences(userId)
+        );
     }
 
     @PutMapping("/preferences/{userId}")
@@ -128,10 +162,7 @@ public class NotificationController {
     public ResponseEntity<Void> sendSMSNotification(
         @Valid @RequestBody NotificationDTO.SMSRequest request
     ) {
-        smsService.sendSMS(
-            request.getUserId(),
-            request.getMessage()
-        );
+        smsService.sendSMS(request.getUserId(), request.getMessage());
         return ResponseEntity.ok().build();
     }
 

@@ -52,7 +52,7 @@ spring:
         - id: core-service
           uri: lb://core-service
           predicates:
-            - Path=/api/core/**
+            - Path=/api/core/**, /api/compliance/**, /api/risk-analysis/**
           filters:
             - name: JwtTokenFilter
 

@@ -1,20 +1,16 @@
 package com.complitracker.core.service;
 
-import com.complitracker.core.model.CalendarEvent;
-import com.complitracker.core.model.CalendarProvider;
-import static com.complitracker.core.model.CalendarProvider.*;
-import com.complitracker.core.model.ComplianceItem;
-import com.complitracker.core.repository.CalendarEventRepository;
-import com.google.auth.oauth2.GoogleCredentials;
-import com.microsoft.graph.authentication.IAuthenticationProvider;
-import lombok.RequiredArgsConstructor;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
+import com.complitracker.core.model.CalendarEvent;
+import com.complitracker.core.model.CalendarProvider;
+import com.complitracker.core.model.ComplianceItem;
+import com.complitracker.core.repository.CalendarEventRepository;
 
 @Service
 public class CalendarIntegrationService {

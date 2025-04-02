@@ -2,12 +2,14 @@ package com.complitracker.core.service;
 
 import com.complitracker.core.model.ComplianceItem;
 import com.complitracker.core.model.RiskAssessmentResult;
+import com.complitracker.core.model.RiskFactor;
 import com.complitracker.core.config.AIServiceProperties;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -59,6 +61,18 @@ public class AIRiskAssessmentService {
             aiServiceProperties.getApiEndpoint() + "/recommendations",
             assessmentData,
             Map.class
+        );
+    }
+
+    public List<String> generateMitigationStrategies(RiskFactor factor) {
+        Map<String, Object> assessmentData = new HashMap<>();
+        assessmentData.put("factorName", factor.getName());
+        assessmentData.put("factorScore", factor.getScore());
+
+        return restTemplate.postForObject(
+            aiServiceProperties.getApiEndpoint() + "/factor-strategies",
+            assessmentData,
+            List.class
         );
     }
 }

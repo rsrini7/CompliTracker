@@ -18,6 +18,12 @@ public class ComplianceItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "entity_id")
+    private Long entityId;
+
+    @Column(name = "user_id", nullable = false)
+    private Long userId;
+
     @Column(nullable = false)
     private String title;
 
@@ -42,6 +48,12 @@ public class ComplianceItem {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
+    @Column(name = "entity_type")
+    private String entityType;
+
+    @Column(name = "area_id")
+    private String areaId;
+
     @Column(name = "created_by")
     private String createdBy;
 
@@ -58,12 +70,14 @@ public class ComplianceItem {
     private LocalDateTime deadline;
 
     @ElementCollection
-    @CollectionTable(name = "compliance_documents", joinColumns = @JoinColumn(name = "compliance_item_id"))
-    private List<String> documents;
+    @CollectionTable(name = "compliance_item_documents", joinColumns = @JoinColumn(name = "compliance_item_id"))
+    @Column(name = "document_path")
+    private List<String> documents = new ArrayList<>();
 
     @ElementCollection
-    @CollectionTable(name = "compliance_historical_data", joinColumns = @JoinColumn(name = "compliance_item_id"))
-    private List<String> historicalData;
+    @CollectionTable(name = "compliance_item_history", joinColumns = @JoinColumn(name = "compliance_item_id"))
+    @Column(name = "history_data", columnDefinition = "TEXT")
+    private List<String> historicalData = new ArrayList<>();
 
     @PrePersist
     protected void onCreate() {
