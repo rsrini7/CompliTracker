@@ -168,7 +168,8 @@ sleep 15
 # Start API Gateway
 echo "Starting API Gateway..."
 cd api-gateway
-./mvnw spring-boot:run -Dspring-boot.run.profiles=local&
+# ./mvnw spring-boot:run -Dspring-boot.run.profiles=local&
+./mvnw spring-boot:run &
 check_status "Starting API Gateway"
 cd ..
 

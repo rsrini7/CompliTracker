@@ -2,6 +2,7 @@ package com.complitracker.apigateway.security;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -46,8 +47,9 @@ public class JwtAuthenticationFilter implements WebFilter {
 
     private boolean validateToken(String token) {
         try {
-            Jwts.parser()
+            Jwts.parserBuilder()
                 .setSigningKey(jwtConfig.getSecret())
+                .build()
                 .parseClaimsJws(token);
             return true;
         } catch (Exception e) {
@@ -56,8 +58,9 @@ public class JwtAuthenticationFilter implements WebFilter {
     }
 
     private Authentication getAuthentication(String token) {
-        Claims claims = Jwts.parser()
+        Claims claims = Jwts.parserBuilder()
                 .setSigningKey(jwtConfig.getSecret())
+                .build()
                 .parseClaimsJws(token)
                 .getBody();
 

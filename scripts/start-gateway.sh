@@ -70,7 +70,8 @@ check_status "Maven build for API Gateway"
 
 # Start API Gateway
 echo "Starting API Gateway..."
-./mvnw spring-boot:run -Dspring-boot.run.profiles=local&
+# ./mvnw spring-boot:run -Dspring-boot.run.profiles=local&
+./mvnw spring-boot:run &
 check_status "Starting API Gateway"
 
 # Wait for API Gateway to be healthy

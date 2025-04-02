@@ -30,10 +30,10 @@ spring:
           filters: []
 
         - id: auth-users-service
-          uri: http://localhost:8081
+          uri: lb://auth-service
           predicates:
             - Path=/api/users/**
-          filters: 
+          filters:
             - name: JwtTokenFilter
 
         - id: document-service
