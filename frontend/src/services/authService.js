@@ -1,6 +1,6 @@
 import axios from "axios";
 
-axios.defaults.baseURL = `http://localhost:5173`
+// axios.defaults.baseURL = `http://localhost:5173`
 
 // Response interceptor
 axios.interceptors.response.use(

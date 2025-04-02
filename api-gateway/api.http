@@ -9,6 +9,9 @@
 @documentId = 3
 @userId = user@example.com
 
+@tempToken = eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhYmNAYWJjIiwicm9sZXMiOlsiUk9MRV9VU0VSIl0sImlhdCI6MTc0MzU4MjA3NCwiZXhwIjoxNzQzNjY4NDc0fQ.bpNNKHdgzjoYCLkZ4uPhDn-wIMY2i1Gh3CEXWCOG5rUBCPVCUa2XjTmIVMKIVKhI8IJY-t79ddmYlxY3Hc0FMQ
+
+
 ### Authentication Service
 
 ### Register
@@ -52,6 +55,10 @@ Content-Type: application/json
 ### Get Current User
 GET {{baseUsersUrl}}/me
 Authorization: Bearer {{authToken}}
+
+### Get Current User - temp token
+GET {{baseUsersUrl}}/me
+Authorization: Bearer {{tempToken}}
 
 ### Get User by ID (Admin only)
 GET {{baseUsersUrl}}/{{userId}}

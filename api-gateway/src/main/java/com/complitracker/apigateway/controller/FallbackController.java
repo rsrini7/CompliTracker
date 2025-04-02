@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/fallback")
-@CrossOrigin(origins = "*")
 public class FallbackController {
 
     @GetMapping("/auth")

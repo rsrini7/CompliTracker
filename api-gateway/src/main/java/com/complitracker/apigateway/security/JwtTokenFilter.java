@@ -2,6 +2,8 @@ package com.complitracker.apigateway.security;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
@@ -12,6 +14,7 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 @Component
+@Slf4j
 public class JwtTokenFilter extends AbstractGatewayFilterFactory<JwtTokenFilter.Config> {
 
     @Value("${jwt.secret}")
@@ -41,6 +44,8 @@ public class JwtTokenFilter extends AbstractGatewayFilterFactory<JwtTokenFilter.
             if (token != null && token.startsWith("Bearer ")) {
                 token = token.substring(7);
             }
+
+            log.info("token : {}", token);
 
             try {
                 Claims claims = Jwts.parser()
